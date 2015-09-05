@@ -1,5 +1,6 @@
 <?php
 namespace LBChat;
+use LBChat\Command\Server\NotifyCommand;
 use Ratchet\ConnectionInterface;
 
 class ChatClient {
@@ -36,25 +37,16 @@ class ChatClient {
 		$this->connection->send($msg);
 	}
 
-	public function notify(ChatClient $sender, $type, $access = 0, $message = "") {
-		$username = $sender->getUsername();
-		$display = $sender->getDisplayName();
-
-		//TODO: Send commands
-		$this->send("NOTIFY $type $access $username $display $message");
-	}
-
 	public function onLogin() {
 		//TODO: Send commands
 		$this->send("LOGGED");
 		$this->server->sendAllUserlists();
-
-		$this->server->notify($this, "login", -1, $this->location);
+		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
 	}
 
 	public function onLogout() {
 		$this->server->sendAllUserlists();
-		$this->server->notify($this, "logout", -1);
+		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "logout", -1, $this->location), $this);
 	}
 
 	public function compare(ChatClient $other) {

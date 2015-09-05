@@ -4,6 +4,7 @@ namespace LBChat\Command\Client;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Command\CommandFactory;
+use LBChat\Command\Server\NotifyCommand;
 
 class LocationCommand extends Command implements IClientCommand {
 
@@ -16,7 +17,7 @@ class LocationCommand extends Command implements IClientCommand {
 
 	public function execute() {
 		$this->client->setLocation($this->location);
-		$this->server->notify($this->client, "setlocation", 0, $this->location);
+		$this->server->broadcastCommand(new NotifyCommand($this->server, $this->client, "setlocation", 0, $this->location));
 		$this->server->sendAllUserlists();
 	}
 
