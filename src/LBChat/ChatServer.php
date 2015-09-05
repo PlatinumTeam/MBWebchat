@@ -90,7 +90,9 @@ class ChatServer implements MessageComponentInterface {
 	 * @param ChatClient|null $exclude
 	 */
 	public function broadcast($msg, ChatClient $exclude = null) {
-		foreach ($this->clients as $client) {
+		foreach ($this->connections as $conn) {
+			$client = $this->resolveClient($conn);
+
 			if ($exclude !== null && $client->compare($exclude))
 				continue;
 
@@ -99,7 +101,9 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	public function broadcastCommand(IServerCommand $command, ChatClient $exclude = null) {
-		foreach ($this->clients as $client) {
+		foreach ($this->connections as $conn) {
+			$client = $this->resolveClient($conn);
+
 			if ($exclude !== null && $client->compare($exclude))
 				continue;
 
