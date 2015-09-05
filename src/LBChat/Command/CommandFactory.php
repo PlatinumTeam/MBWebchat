@@ -21,6 +21,7 @@ abstract class CommandFactory {
 		case "KEY":      return new KeyCommand     ($client, $server, $rest);
 		case "CHAT":     return new ChatCommand    ($client, $server, $rest);
 		case "USERLIST": return new UserlistCommand($client, $server       );
+		case "PING":     return new PingCommand    ($client, $server, $rest);
 		}
 
 		return null;
