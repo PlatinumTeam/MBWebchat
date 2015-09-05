@@ -6,10 +6,12 @@ class ChatClient {
 	private $server;
 	private $connection;
 	private $username;
+	private $location;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
 		$this->server = $server;
 		$this->connection = $connection;
+		$this->location = 0;
 	}
 
 	public function interpretMessage($msg) {
@@ -46,11 +48,27 @@ class ChatClient {
 		$this->username = $username;
 	}
 
+	public function getLocation() {
+		return $this->location;
+	}
+
+	public function setLocation($location) {
+		$this->location = $location;
+	}
+
 	public function login($type, $data) {
 		$status = false;
 		switch ($type) {
-		case "key": $status = Login\Helper::tryKey($this->getUsername(), $data); break;
-		case "password": $status = Login\Helper::tryKey($this->getUsername(), $data); break;
+		case "key":
+			$status = Login\Helper::tryKey($this->getUsername(), $data);
+			//Usually this is webchat
+			$this->location = 3;
+			break;
+		case "password":
+			$status = Login\Helper::tryKey($this->getUsername(), $data);
+			//Usually this is in-game
+			$this->location = 0;
+			break;
 		}
 
 		if ($status === false) {
