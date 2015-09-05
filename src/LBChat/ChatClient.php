@@ -7,11 +7,13 @@ class ChatClient {
 	private $connection;
 	private $username;
 	private $location;
+	private $access;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
 		$this->server = $server;
 		$this->connection = $connection;
 		$this->location = 0;
+		$this->access = 0;
 	}
 
 	public function interpretMessage($msg) {
@@ -54,6 +56,14 @@ class ChatClient {
 
 	public function setLocation($location) {
 		$this->location = $location;
+	}
+
+	public function getAccess() {
+		return $this->access;
+	}
+
+	public function setAccess($access) {
+		$this->access = $access;
 	}
 
 	public function login($type, $data) {
