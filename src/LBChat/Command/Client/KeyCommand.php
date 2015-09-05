@@ -1,10 +1,11 @@
 <?php
-namespace LBChat\Command;
+namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\Command;
 
-class KeyCommand extends Command {
+class KeyCommand extends Command implements IClientCommand {
 	protected $key;
 
 	public function __construct(ChatClient $client, ChatServer $server, $key) {

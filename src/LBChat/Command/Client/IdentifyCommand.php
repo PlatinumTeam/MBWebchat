@@ -1,10 +1,11 @@
 <?php
-namespace LBChat\Command;
+namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\Command;
 
-class IdentifyCommand extends Command {
+class IdentifyCommand extends Command implements IClientCommand {
 
 	protected $username;
 

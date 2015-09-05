@@ -1,10 +1,11 @@
 <?php
-namespace LBChat\Command;
+namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\Command;
 
-class UserlistCommand extends Command {
+class UserlistCommand extends Command implements IClientCommand {
 
 	public function parse() {
 		//Send the client the user list

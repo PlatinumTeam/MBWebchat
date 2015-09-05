@@ -4,7 +4,7 @@ namespace LBChat\Command;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 
-abstract class Command implements ICommand {
+abstract class Command {
 	/**
 	 * @var ChatClient $client The client to which the command is attached
 	 */
