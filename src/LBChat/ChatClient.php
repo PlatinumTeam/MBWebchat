@@ -20,7 +20,8 @@ class ChatClient {
 		$command = Command\CommandFactory::construct($this, $this->server, $msg);
 
 		if ($command === null) {
-			//Error
+			//TODO: Send commands
+			$this->send("INVALID");
 		} else {
 			$command->parse();
 		}
