@@ -16,7 +16,9 @@ abstract class CommandFactory {
 
 		switch ($first) {
 		case "IDENTIFY": return new IdentifyCommand($client, $rest);
-
+		case "KEY": return new KeyCommand($client, $rest);
 		}
+
+		return null;
 	}
 }

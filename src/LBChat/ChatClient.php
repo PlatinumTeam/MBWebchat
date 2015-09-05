@@ -12,15 +12,20 @@ class ChatClient {
 
 	public function interpretMessage($msg) {
 		$command = Command\CommandFactory::construct($this, $msg);
-		$command->parse();
+
+		if ($command === null) {
+			//Error
+		} else {
+			$command->parse();
+		}
 	}
 
 	public function send($msg) {
 		$this->connection->send($msg);
 	}
 
-	public function onLogin($location) {
-
+	public function onLogin() {
+		$this->send("LOGGED\n");
 	}
 
 	public function onLogout() {
@@ -37,5 +42,20 @@ class ChatClient {
 
 	public function setUsername($username) {
 		$this->username = $username;
+	}
+
+	public function login($type, $data) {
+		$status = false;
+		switch ($type) {
+		case "key": $status = Login\Helper::tryKey($this->getUsername(), $data); break;
+		case "password": $status = Login\Helper::tryKey($this->getUsername(), $data); break;
+		}
+
+		if ($status === false) {
+			//Login failed
+		} else {
+			//Login succeeded
+			$this->onLogin();
+		}
 	}
 }
