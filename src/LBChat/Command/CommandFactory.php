@@ -18,11 +18,12 @@ abstract class CommandFactory {
 		$rest = implode(" ", $words);
 
 		switch ($first) {
-		case "IDENTIFY": return new Client\IdentifyCommand($client, $server, $rest);
-		case "KEY":      return new Client\KeyCommand     ($client, $server, $rest);
 		case "CHAT":     return new Client\ChatCommand    ($client, $server, $rest);
-		case "USERLIST": return new Client\UserlistCommand($client, $server       );
+		case "IDENTIFY": return new Client\IdentifyCommand($client, $server, $rest);
+		case "LOCATION": return new Client\LocationCommand($client, $server, $rest);
+		case "KEY":      return new Client\KeyCommand     ($client, $server, $rest);
 		case "PING":     return new Client\PingCommand    ($client, $server, $rest);
+		case "USERLIST": return new Client\UserlistCommand($client, $server       );
 		}
 
 		return null;

@@ -10,7 +10,7 @@ class LocationCommand extends Command implements IClientCommand {
 
 	public function __construct(ChatClient $client, ChatServer $server, $location) {
 		parent::__construct($client, $server);
-		$this->location = $location;
+		$this->location = (int)$location;
 	}
 
 	public function parse() {
