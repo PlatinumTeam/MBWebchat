@@ -6,7 +6,7 @@ use LBChat\ChatServer;
 
 class UserlistCommand extends Command implements IClientCommand {
 
-	public function parse() {
+	public function execute() {
 		//Send the client the user list
 		$this->server->sendUserlist($this->client);
 	}

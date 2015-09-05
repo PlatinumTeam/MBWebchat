@@ -13,7 +13,7 @@ class LocationCommand extends Command implements IClientCommand {
 		$this->location = (int)$location;
 	}
 
-	public function parse() {
+	public function execute() {
 		$this->client->setLocation($this->location);
 		$this->server->notify($this->client, "setlocation", 0, $this->location);
 		$this->server->sendAllUserlists();

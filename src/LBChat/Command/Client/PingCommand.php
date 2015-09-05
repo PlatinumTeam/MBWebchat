@@ -13,7 +13,7 @@ class PingCommand extends Command implements IClientCommand {
 		$this->data = $data;
 	}
 
-	public function parse() {
+	public function execute() {
 		//TODO: Send commands
 		$this->client->send("PONG {$this->data}");
 	}

@@ -12,7 +12,7 @@ class KeyCommand extends Command implements IClientCommand {
 		$this->key = $key;
 	}
 
-	public function parse() {
+	public function execute() {
 		$this->client->login("key", $this->key);
 	}
 }

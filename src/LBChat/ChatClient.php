@@ -28,7 +28,7 @@ class ChatClient {
 			//TODO: Send commands
 			$this->send("INVALID");
 		} else {
-			$command->parse();
+			$command->execute();
 		}
 	}
 

@@ -2,5 +2,8 @@
 namespace LBChat\Command\Client;
 
 interface IClientCommand {
-	public function parse();
+	/**
+	 * Execute the given client command, applying any changes that it represents.
+	 */
+	public function execute();
 }

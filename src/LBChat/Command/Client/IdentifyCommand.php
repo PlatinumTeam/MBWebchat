@@ -13,7 +13,7 @@ class IdentifyCommand extends Command implements IClientCommand {
 		$this->username = $username;
 	}
 
-	public function parse() {
+	public function execute() {
 		$this->client->setUsername($this->username);
 	}
 }

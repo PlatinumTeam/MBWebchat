@@ -14,7 +14,7 @@ class ChatCommand extends Command implements IClientCommand {
 		$this->message = $message;
 	}
 
-	public function parse() {
+	public function execute() {
 		$command = new Server\ChatCommand($this->server, $this->client, null, $this->message);
 		$this->server->broadcastCommand($command);
 	}
