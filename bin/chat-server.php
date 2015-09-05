@@ -4,7 +4,9 @@ use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 use LBChat\Database\Database;
 use LBChat\Database\SQLChatServer;
+
 use LBChat\Command\CommandFactory;
+use LBChat\Command\ChatCommandFactory;
 
 use LBChat\Integration\JoomlaUserSupport;
 use LBChat\Integration\LBUserSupport;
@@ -13,6 +15,7 @@ use LBChat\Integration\LBServerSupport;
 require dirname(__DIR__) . "/vendor/autoload.php";
 
 CommandFactory::init();
+ChatCommandFactory::init();
 
 $databases = array(
 	"platinum" => new Database("platinum"),

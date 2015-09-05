@@ -3,6 +3,7 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\ChatCommandFactory;
 use LBChat\Command\CommandFactory;
 use LBChat\Command\Server;
 use LBChat\Utils\String;
@@ -29,11 +30,14 @@ class ChatCommand extends Command implements IClientCommand {
 		$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
 		$message = implode(" ", $words);
 
-		//TODO: Better chat commands here
-		if ($words[0] === "/whisper") {
-			$recipient = $server->findClient(String::decodeSpaces($words[1]));
+		//If we can find a chat command (/something) then we should use that instead of the default
+		// chat command behavior.
+		$command = ChatCommandFactory::construct($client, $server, $message);
+		if ($command !== null) {
+			return $command;
 		}
 
+		//No command, just send a basic chat message.
 		return new ChatCommand($client, $server, $recipient, $message);
 	}
 }
