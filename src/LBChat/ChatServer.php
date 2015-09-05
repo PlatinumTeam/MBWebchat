@@ -1,5 +1,6 @@
 <?php
 namespace LBChat;
+use LBChat\Command\Server;
 use LBChat\Command\Server\IServerCommand;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
@@ -85,28 +86,15 @@ class ChatServer implements MessageComponentInterface {
 
 	public function sendUserlist(ChatClient $recipient) {
 		//Send them a userlist
-		$recipient->send("USER START");
+		$command = new Server\UserlistCommand($this);
+		$command->start($recipient);
 
 		foreach ($this->clients as $conn) {
 			$client = $this->resolveClient($conn);
-
-			$username = $client->getUsername();
-			$display  = $client->getDisplayName();
-			$access   = $client->getAccess();
-			$location = $client->getLocation();
-
-			$color  = $client->getColor();
-			$titles = $client->getTitles();
-			$flair  = $titles[0];
-			$prefix = $titles[1];
-			$suffix = $titles[2];
-
-			$recipient->send("USER COLORS $username $color $color $color\n");
-			$recipient->send("USER TITLES $flair $prefix $suffix\n");
-			$recipient->send("USER NAME $username $access $location $display\n");
+			$command->send($recipient, $client);
 		}
 
-		$recipient->send("USER DONE");
+		$command->done($recipient);
 	}
 
 	public function sendAllUserlists() {
