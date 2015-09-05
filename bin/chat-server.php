@@ -8,6 +8,7 @@ use LBChat\Command\CommandFactory;
 
 use LBChat\Integration\JoomlaUserSupport;
 use LBChat\Integration\LBUserSupport;
+use LBChat\Integration\LBServerSupport;
 
 require dirname(__DIR__) . "/vendor/autoload.php";
 
@@ -20,6 +21,7 @@ $databases = array(
 
 JoomlaUserSupport::setDatabase($databases["joomla"]);
 LBUserSupport::setDatabase($databases["platinum"]);
+LBServerSupport::setDatabase($databases["platinum"]);
 
 $server = IoServer::factory(
 	new HttpServer(
