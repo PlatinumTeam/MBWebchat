@@ -3,6 +3,7 @@ namespace LBChat\Command\Server;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Utils\String;
 
 class ChatCommand extends Command implements IServerCommand {
 	protected $from;
@@ -17,13 +18,13 @@ class ChatCommand extends Command implements IServerCommand {
 	}
 
 	public function execute(ChatClient $client) {
-		$username = $this->from->getUsername();
-		$display = $this->from->getDisplayName();
+		$username    = String::encodeSpaces($this->from->getUsername());
+		$display     = String::encodeSpaces($this->from->getDisplayName());
 		$destination = "";
 		$access = $this->from->getAccess();
 
 		if ($this->to !== null)
-			$destination = $this->to->getDisplayName();
+			$destination = String::encodeSpaces($this->to->getDisplayName());
 
 		//TODO: Invisible user chats to mods+ only
 		//TODO: Shadow banning
