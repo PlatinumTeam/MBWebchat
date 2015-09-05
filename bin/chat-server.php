@@ -6,6 +6,8 @@ use LBChat\ChatServer;
 
 require dirname(__DIR__) . "/vendor/autoload.php";
 
+\LBChat\Command\CommandFactory::init();
+
 $server = IoServer::factory(
 	new HttpServer(
 		new WsServer(

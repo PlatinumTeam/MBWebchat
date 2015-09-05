@@ -1,6 +1,5 @@
 <?php
 namespace LBChat;
-use LBChat\Command\CommandFactory;
 use LBChat\Command\Server;
 use LBChat\Command\Server\IServerCommand;
 use Ratchet\MessageComponentInterface;
@@ -13,8 +12,6 @@ class ChatServer implements MessageComponentInterface {
 	public function __construct() {
 		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
-
-		CommandFactory::init();
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
