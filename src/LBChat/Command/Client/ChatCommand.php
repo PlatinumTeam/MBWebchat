@@ -24,7 +24,7 @@ class ChatCommand extends Command implements IClientCommand {
 	}
 
 	public static function init(ChatClient $client, ChatServer $server, $rest) {
-		//CHAT <recipient> <message ...>
+		//<recipient> <message ...>
 		$words = explode(" ", $rest);
 		//Pop the first word off and resolve it
 		$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
