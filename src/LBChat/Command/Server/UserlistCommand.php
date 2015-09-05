@@ -24,13 +24,13 @@ class UserlistCommand extends Command implements IServerCommand {
 		$client->send("USER START");
 	}
 	protected function send(ChatClient $client, ChatClient $other) {
-		$username = $client->getUsername();
-		$display  = $client->getDisplayName();
-		$access   = $client->getAccess();
-		$location = $client->getLocation();
+		$username = $other->getUsername();
+		$display  = $other->getDisplayName();
+		$access   = $other->getAccess();
+		$location = $other->getLocation();
 
-		$color  = $client->getColor();
-		$titles = $client->getTitles();
+		$color  = $other->getColor();
+		$titles = $other->getTitles();
 		$flair  = $titles[0];
 		$prefix = $titles[1];
 		$suffix = $titles[2];
