@@ -36,7 +36,9 @@ abstract class LBServerSupport {
 		return $query->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
-	public static function getWelcomeMessage() {
+	public static function getWelcomeMessage($webchat = false) {
+		if ($webchat)
+			return self::getPreference("webwelcome");
 		return self::getPreference("welcome") . "\\n\\nTODO: Qotd";
 	}
 }

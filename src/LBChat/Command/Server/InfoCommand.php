@@ -16,7 +16,7 @@ class InfoCommand extends Command implements IServerCommand {
 		$client->send("INFO PRIVILEGE $privilege");
 
 		//Some global server stuff
-		$welcome = LBServerSupport::getWelcomeMessage();
+		$welcome = LBServerSupport::getWelcomeMessage($client->getLocation() === 3);
 		$default = LBServerSupport::getPreference("default"); //Default high score name
 
 		$client->send("INFO WELCOME $welcome");
