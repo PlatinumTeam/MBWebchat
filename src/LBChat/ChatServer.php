@@ -66,4 +66,30 @@ class ChatServer implements MessageComponentInterface {
 				$client->notify($sender, $type, $access, $message);
 		}
 	}
+
+	public function sendUserlist(ChatClient $client) {
+		//Send them a userlist
+		$client->send("USER START");
+
+		foreach ($this->clients as $conn) {
+			$client = $this->resolveClient($conn);
+
+			$username = $client->getUsername();
+			$display = $client->getDisplayName();
+			$access = $client->getAccess();
+			$location = $client->getLocation();
+
+			$color = "000000"; //TODO: User colors
+			//TODO: User titles
+			$flair = "";
+			$prefix = "";
+			$suffix = "";
+
+			$client->send("USER COLORS $username $color $color $color\n");
+			$client->send("USER TITLES $flair $prefix $suffix\n");
+			$client->send("USER NAME $username $access $location $display\n");
+		}
+
+		$client->send("USER DONE");
+	}
 }
