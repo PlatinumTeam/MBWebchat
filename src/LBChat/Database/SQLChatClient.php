@@ -33,6 +33,8 @@ class SQLChatClient extends ChatClient {
 		$query->bindParam(":access", $this->getAccess());
 		$query->bindParam(":location", $this->getLocation());
 		$query->execute();
+
+		$this->server->sendUserlist($this);
 	}
 
 	public function onLogout() {
