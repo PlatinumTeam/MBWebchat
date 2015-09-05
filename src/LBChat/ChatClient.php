@@ -6,6 +6,7 @@ class ChatClient {
 	private $server;
 	private $connection;
 	private $username;
+	private $display;
 	private $location;
 	private $access;
 
@@ -33,7 +34,7 @@ class ChatClient {
 
 	public function notify(ChatClient $sender, $type, $access = 0, $message = "") {
 		$username = $sender->getUsername();
-		$display = $sender->getUsername(); //TODO: Display names
+		$display = $sender->getDisplayName();
 
 		//TODO: Send commands
 		$this->send("NOTIFY $type $access $username $display $message");
@@ -60,6 +61,15 @@ class ChatClient {
 
 	public function setUsername($username) {
 		$this->username = $username;
+		$this->display = $username;
+	}
+
+	public function getDisplayName() {
+		return $this->display;
+	}
+
+	public function setDisplayName($display) {
+		$this->display = $display;
 	}
 
 	public function getLocation() {

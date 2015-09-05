@@ -15,7 +15,7 @@ class ChatCommand extends Command {
 
 	public function parse() {
 		$username = $this->client->getUsername();
-		$display = $this->client->getUsername(); //TODO: Add display name support
+		$display = $this->client->getDisplayName();
 		$destination = ""; //TODO: Add private messages
 		$access = 0; //TODO: Add access support
 
