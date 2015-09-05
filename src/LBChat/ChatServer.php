@@ -63,6 +63,28 @@ class ChatServer implements MessageComponentInterface {
 	protected function resolveClient(ConnectionInterface $conn) {
 		return $this->connections[$conn];
 	}
+
+	/**
+	 * @param $name
+	 * @return ChatClient
+	 */
+	public function findClient($name) {
+		//Try to match by username first
+		foreach ($this->connections as $conn) {
+			$client = $this->resolveClient($conn);
+			if ($client->getUsername() === $name) {
+				return $client;
+			}
+		}
+		//If that fails, try by display name
+		foreach ($this->connections as $conn) {
+			$client = $this->resolveClient($conn);
+			if ($client->getDisplayName() === $name) {
+				return $client;
+			}
+		}
+		return null;
+	}
 	/**
 	 * @param                 $msg
 	 * @param ChatClient|null $exclude
@@ -92,9 +114,15 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	public function sendAllUserlists() {
-		$command = new Server\UserlistCommand($this, $this->clients);
-		foreach ($this->clients as $client) {
-			$command->execute($client);
+		$this->eachClient(function(ChatClient $client) {
+			$this->sendUserlist($client);
+		});
+	}
+
+	public function eachClient(callable $callback) {
+		foreach ($this->connections as $conn) {
+			$client = $this->resolveClient($conn);
+			call_user_func($callback, $client);
 		}
 	}
 }
