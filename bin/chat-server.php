@@ -2,19 +2,24 @@
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
-use LBChat\ChatServer;
+use LBChat\Database\Database;
+use LBChat\Database\SQLChatServer;
+use LBChat\Command\CommandFactory;
 
 require dirname(__DIR__) . "/vendor/autoload.php";
 
-\LBChat\Command\CommandFactory::init();
+CommandFactory::init();
+
+$database = new Database();
+$database->connect();
 
 $server = IoServer::factory(
 	new HttpServer(
 		new WsServer(
-			new ChatServer()
+			new SQLChatServer($database)
 		)
 	),
-	28002
+	39002
 );
 
 $server->run();
