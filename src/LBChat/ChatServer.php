@@ -16,7 +16,13 @@ class ChatServer implements MessageComponentInterface {
 	}
 	public function onMessage(ConnectionInterface $conn, $msg) {
 		$from = $this->resolveClient($conn);
-		$from->interpretMessage($msg);
+
+		//Split the message into lines
+		$lines = explode("\n", $msg);
+
+		foreach ($lines as $line) {
+			$from->interpretMessage($line);
+		}
 	}
 	public function onClose(ConnectionInterface $conn) {
 		$client = $this->resolveClient($conn);
