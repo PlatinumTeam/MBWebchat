@@ -16,6 +16,9 @@ class SQLChatClient extends ChatClient {
 	}
 
 	public function onLogin() {
+		$command = new InfoCommand($this->server);
+		$command->execute($this);
+
 		parent::onLogin();
 
 		$query = $this->db("platinum")->prepare("INSERT INTO `loggedin` SET
@@ -30,9 +33,6 @@ class SQLChatClient extends ChatClient {
 		$query->bindParam(":access", $this->getAccess());
 		$query->bindParam(":location", $this->getLocation());
 		$query->execute();
-
-		$command = new InfoCommand($this->server);
-		$command->execute($this);
 	}
 
 	public function onLogout() {
