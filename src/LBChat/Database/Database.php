@@ -2,6 +2,9 @@
 namespace LBChat\Database;
 
 class Database {
+	/**
+	 * @var \PDO $connection
+	 */
 	protected $connection;
 
 	public function connect() {
@@ -15,5 +18,9 @@ class Database {
 			//Something
 			throw $e;
 		}
+	}
+
+	public function prepare($query) {
+		return $this->connection->prepare($query);
 	}
 }
