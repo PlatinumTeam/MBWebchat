@@ -3,7 +3,6 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
-use LBChat\Command\Command;
 
 class ChatCommand extends Command implements IClientCommand {
 

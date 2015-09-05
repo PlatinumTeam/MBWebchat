@@ -1,5 +1,5 @@
 <?php
-namespace LBChat\Command;
+namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
