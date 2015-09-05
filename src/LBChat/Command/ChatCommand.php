@@ -23,6 +23,7 @@ class ChatCommand extends Command {
 		//TODO: Shadow banning
 
 		//Broadcast a chat message to everyone
+		//TODO: Send commands
 		$this->server->broadcast("CHAT $username $display $destination $access {$this->message}");
 	}
 }
