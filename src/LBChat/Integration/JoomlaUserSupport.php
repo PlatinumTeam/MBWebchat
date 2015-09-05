@@ -1,6 +1,8 @@
 <?php
 namespace LBChat\Integration;
 
+use LBChat\Database\Database;
+
 define( '_JEXEC', 1 );
 define( 'DS', DIRECTORY_SEPARATOR );
 define('JPATH_BASE', realpath("../public_html")); //Joomla root path
@@ -17,11 +19,11 @@ jimport("joomla.user.authentication");
 
 abstract class JoomlaUserSupport {
 	/**
-	 * @var \PDO $database
+	 * @var Database $database
 	 */
 	protected static $database;
 
-	public static function setDatabase(\PDO $database) {
+	public static function setDatabase(Database $database) {
 		self::$database = $database;
 	}
 

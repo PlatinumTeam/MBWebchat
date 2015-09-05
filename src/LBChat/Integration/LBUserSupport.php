@@ -1,13 +1,15 @@
 <?php
 namespace LBChat\Integration;
 
+use LBChat\Database\Database;
+
 abstract class LBUserSupport {
 	/**
-	 * @var \PDO $database
+	 * @var Database $database
 	 */
 	protected static $database;
 
-	public static function setDatabase(\PDO $database) {
+	public static function setDatabase(Database $database) {
 		self::$database = $database;
 	}
 
