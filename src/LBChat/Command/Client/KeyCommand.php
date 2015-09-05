@@ -3,6 +3,7 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\CommandFactory;
 
 class KeyCommand extends Command implements IClientCommand {
 	protected $key;
@@ -14,5 +15,9 @@ class KeyCommand extends Command implements IClientCommand {
 
 	public function execute() {
 		$this->client->login("key", $this->key);
+	}
+
+	public static function init(ChatClient $client, ChatServer $server, $rest) {
+		return new KeyCommand($client, $server, $rest);
 	}
 }

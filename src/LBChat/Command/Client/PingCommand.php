@@ -3,6 +3,7 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\CommandFactory;
 
 class PingCommand extends Command implements IClientCommand {
 
@@ -16,6 +17,10 @@ class PingCommand extends Command implements IClientCommand {
 	public function execute() {
 		//TODO: Send commands
 		$this->client->send("PONG {$this->data}");
+	}
+
+	public static function init(ChatClient $client, ChatServer $server, $rest) {
+		return new PingCommand($client, $server, $rest);
 	}
 
 }

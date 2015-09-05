@@ -3,6 +3,7 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\CommandFactory;
 
 class IdentifyCommand extends Command implements IClientCommand {
 
@@ -15,5 +16,9 @@ class IdentifyCommand extends Command implements IClientCommand {
 
 	public function execute() {
 		$this->client->setUsername($this->username);
+	}
+
+	public static function init(ChatClient $client, ChatServer $server, $rest) {
+		return new IdentifyCommand($client, $server, $rest);
 	}
 }

@@ -3,6 +3,7 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\CommandFactory;
 
 class LocationCommand extends Command implements IClientCommand {
 
@@ -17,5 +18,9 @@ class LocationCommand extends Command implements IClientCommand {
 		$this->client->setLocation($this->location);
 		$this->server->notify($this->client, "setlocation", 0, $this->location);
 		$this->server->sendAllUserlists();
+	}
+
+	public static function init(ChatClient $client, ChatServer $server, $rest) {
+		return new LocationCommand($client, $server, $rest);
 	}
 }

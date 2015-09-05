@@ -3,6 +3,7 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\CommandFactory;
 use LBChat\Command\Server;
 
 class ChatCommand extends Command implements IClientCommand {
@@ -17,5 +18,9 @@ class ChatCommand extends Command implements IClientCommand {
 	public function execute() {
 		$command = new Server\ChatCommand($this->server, $this->client, null, $this->message);
 		$this->server->broadcastCommand($command);
+	}
+
+	public static function init(ChatClient $client, ChatServer $server, $rest) {
+		return new ChatCommand($client, $server, $rest);
 	}
 }
