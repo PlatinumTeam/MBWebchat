@@ -43,12 +43,13 @@ class ChatClient {
 	public function onLogin() {
 		//TODO: Send commands
 		$this->send("LOGGED");
-		$this->server->sendUserlist($this);
+		$this->server->sendAllUserlists();
 
 		$this->server->notify($this, "login", -1, $this->location);
 	}
 
 	public function onLogout() {
+		$this->server->sendAllUserlists();
 		$this->server->notify($this, "logout", -1);
 	}
 

@@ -21,6 +21,10 @@ class ChatServer implements MessageComponentInterface {
 		$lines = explode("\n", $msg);
 
 		foreach ($lines as $line) {
+			//Ignore blank lines
+			if ($line === "")
+				continue;
+
 			$from->interpretMessage($line);
 		}
 	}
@@ -67,9 +71,9 @@ class ChatServer implements MessageComponentInterface {
 		}
 	}
 
-	public function sendUserlist(ChatClient $client) {
+	public function sendUserlist(ChatClient $recipient) {
 		//Send them a userlist
-		$client->send("USER START");
+		$recipient->send("USER START");
 
 		foreach ($this->clients as $conn) {
 			$client = $this->resolveClient($conn);
@@ -85,11 +89,18 @@ class ChatServer implements MessageComponentInterface {
 			$prefix = "";
 			$suffix = "";
 
-			$client->send("USER COLORS $username $color $color $color\n");
-			$client->send("USER TITLES $flair $prefix $suffix\n");
-			$client->send("USER NAME $username $access $location $display\n");
+			$recipient->send("USER COLORS $username $color $color $color\n");
+			$recipient->send("USER TITLES $flair $prefix $suffix\n");
+			$recipient->send("USER NAME $username $access $location $display\n");
 		}
 
-		$client->send("USER DONE");
+		$recipient->send("USER DONE");
+	}
+
+	public function sendAllUserlists() {
+		foreach ($this->clients as $conn) {
+			$client = $this->resolveClient($conn);
+			$this->sendUserlist($client);
+		}
 	}
 }
