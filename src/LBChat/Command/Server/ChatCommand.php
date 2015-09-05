@@ -22,6 +22,7 @@ class ChatCommand extends Command implements IServerCommand {
 		$display     = String::encodeSpaces($this->from->getDisplayName());
 		$destination = "";
 		$access = $this->from->getAccess();
+		$message = urlencode($this->message);
 
 		if ($this->to !== null)
 			$destination = String::encodeSpaces($this->to->getDisplayName());
@@ -31,6 +32,6 @@ class ChatCommand extends Command implements IServerCommand {
 
 		//Broadcast a chat message to everyone
 		//TODO: Send commands
-		$client->send("CHAT $username $display $destination $access {$this->message}");
+		$client->send("CHAT $username $display $destination $access $message");
 	}
 }
