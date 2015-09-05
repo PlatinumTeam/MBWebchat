@@ -15,6 +15,7 @@ class LocationCommand extends Command implements IClientCommand {
 
 	public function parse() {
 		$this->client->setLocation($this->location);
+		$this->server->notify($this->client, "setlocation", 0, $this->location);
 		$this->server->sendAllUserlists();
 	}
 }
