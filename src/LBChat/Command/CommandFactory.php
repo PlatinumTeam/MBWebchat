@@ -7,6 +7,7 @@ use LBChat\Command\Client\IClientCommand;
 
 abstract class CommandFactory {
 	/**
+	 * Construct a client command object from a given message, that can be executed.
 	 * @return IClientCommand
 	 */
 	public static function construct(ChatClient $client, ChatServer $server, $msg) {
