@@ -5,13 +5,25 @@ use LBChat\ChatClient;
 use LBChat\ChatServer;
 
 class UserlistCommand extends Command implements IServerCommand {
-	public function execute(ChatClient $client) {
+	protected $clients;
 
+	public function __construct(ChatServer $server, $clients) {
+		parent::__construct($server);
+		$this->clients = $clients;
 	}
-	public function start(ChatClient $client) {
+
+	public function execute(ChatClient $client) {
+		$this->start($client);
+		foreach ($this->clients as $cl) {
+			$this->send($client, $cl);
+		}
+		$this->done($client);
+	}
+	
+	protected function start(ChatClient $client) {
 		$client->send("USER START");
 	}
-	public function send(ChatClient $client, ChatClient $other) {
+	protected function send(ChatClient $client, ChatClient $other) {
 		$username = $client->getUsername();
 		$display  = $client->getDisplayName();
 		$access   = $client->getAccess();
@@ -27,7 +39,7 @@ class UserlistCommand extends Command implements IServerCommand {
 		$client->send("USER TITLES $flair $prefix $suffix\n");
 		$client->send("USER NAME $username $access $location $display\n");
 	}
-	public function done(ChatClient $client) {
+	protected function done(ChatClient $client) {
 		$client->send("USER DONE");
 	}
 }

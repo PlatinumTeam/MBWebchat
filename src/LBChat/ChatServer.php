@@ -84,19 +84,14 @@ class ChatServer implements MessageComponentInterface {
 
 	public function sendUserlist(ChatClient $recipient) {
 		//Send them a userlist
-		$command = new Server\UserlistCommand($this);
-		$command->start($recipient);
-
-		foreach ($this->clients as $client) {
-			$command->send($recipient, $client);
-		}
-
-		$command->done($recipient);
+		$command = new Server\UserlistCommand($this, $this->clients);
+		$command->execute($recipient);
 	}
 
 	public function sendAllUserlists() {
+		$command = new Server\UserlistCommand($this, $this->clients);
 		foreach ($this->clients as $client) {
-			$this->sendUserlist($client);
+			$command->execute($client);
 		}
 	}
 }
