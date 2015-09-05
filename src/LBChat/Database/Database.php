@@ -7,13 +7,13 @@ class Database {
 	 */
 	protected $connection;
 
-	public function connect() {
+	public function __construct($name) {
 		//Load the db config
 		require("../db.php");
 
 		try {
-			$dsn = "mysql:dbname=" . \MBDB::getDatabaseName("platinum") . ";host=" . \MBDB::getDatabaseHost("platinum");
-			$this->connection = new \PDO($dsn, \MBDB::getDatabaseUser("platinum"), \MBDB::getDatabasePass("platinum"));
+			$dsn = "mysql:dbname=" . \MBDB::getDatabaseName($name) . ";host=" . \MBDB::getDatabaseHost($name);
+			$this->connection = new \PDO($dsn, \MBDB::getDatabaseUser($name), \MBDB::getDatabasePass($name));
 		} catch (\Exception $e) {
 			//Something
 			throw $e;

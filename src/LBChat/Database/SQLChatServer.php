@@ -6,26 +6,34 @@ use Ratchet\ConnectionInterface;
 
 class SQLChatServer extends ChatServer {
 	/**
-	 * @var Database $database
+	 * @var array $databases
 	 */
-	protected $database;
+	protected $databases;
 
-	public function __construct($database) {
+	public function __construct($databases) {
 		parent::__construct();
 
-		$this->database = $database;
+		$this->databases = $databases;
 		$this->initDatabase();
 	}
 
 	protected function addClient(ConnectionInterface $conn) {
-		$client = new SQLChatClient($this, $conn, $this->database);
+		$client = new SQLChatClient($this, $conn, $this->databases);
 		$this->connections->attach($conn, $client);
 		$this->clients->attach($client);
 	}
 
 	protected function initDatabase() {
-		$this->database->prepare("TRUNCATE TABLE `loggedin`")->execute();
-		$this->database->prepare("TRUNCATE TABLE `jloggedin`")->execute();
+		$this->db("platinum")->prepare("TRUNCATE TABLE `loggedin`")->execute();
+		$this->db("platinum")->prepare("TRUNCATE TABLE `jloggedin`")->execute();
+	}
+
+	/**
+	 * @param $name
+	 * @return Database
+	 */
+	protected function db($name) {
+		return $this->databases[$name];
 	}
 
 }

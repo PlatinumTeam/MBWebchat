@@ -10,13 +10,15 @@ require dirname(__DIR__) . "/vendor/autoload.php";
 
 CommandFactory::init();
 
-$database = new Database();
-$database->connect();
+$databases = array(
+	"platinum" => new Database("platinum"),
+	"joomla" => new Database("joomla")
+);
 
 $server = IoServer::factory(
 	new HttpServer(
 		new WsServer(
-			new SQLChatServer($database)
+			new SQLChatServer($databases)
 		)
 	),
 	39002

@@ -5,17 +5,17 @@ use LBChat\ChatClient;
 use Ratchet\ConnectionInterface;
 
 class SQLChatClient extends ChatClient {
-	protected $database;
+	protected $databases;
 
-	public function __construct(SQLChatServer $server, ConnectionInterface $connection, Database $database) {
+	public function __construct(SQLChatServer $server, ConnectionInterface $connection, array $databases) {
 		parent::__construct($server, $connection);
-		$this->database = $database;
+		$this->databases = $databases;
 	}
 
 	public function onLogin() {
 		parent::onLogin();
 
-		$query = $this->database->prepare("INSERT INTO `loggedin` SET
+		$query = $this->db("platinum")->prepare("INSERT INTO `loggedin` SET
 				`username` = :username,
 				`display` = :display,
 				`access` = :access,
@@ -32,14 +32,14 @@ class SQLChatClient extends ChatClient {
 	public function onLogout() {
 		parent::onLogout();
 
-		$query = $this->database->prepare("DELETE FROM `loggedin` WHERE `username` = :username LIMIT 1");
+		$query = $this->db("platinum")->prepare("DELETE FROM `loggedin` WHERE `username` = :username LIMIT 1");
 		$query->bindParam(":username", $this->getUsername());
 		$query->execute();
 	}
 
 	public function getUsername() {
 		$username = parent::getUsername();
-		$query = $this->database->prepare("SELECT `username` FROM `users` WHERE `username` = :username");
+		$query = $this->db("platinum")->prepare("SELECT `username` FROM `users` WHERE `username` = :username");
 		$query->bindParam(":username", $username);
 		$query->execute();
 		return $query->fetchColumn(0);
@@ -47,9 +47,17 @@ class SQLChatClient extends ChatClient {
 
 	public function getDisplayName() {
 		$username = parent::getUsername();
-		$query = $this->database->prepare("SELECT `display` FROM `users` WHERE `username` = :username");
+		$query = $this->db("joomla")->prepare("SELECT `name` FROM `bv2xj_users` WHERE `username` = :username");
 		$query->bindParam(":username", $username);
 		$query->execute();
 		return $query->fetchColumn(0);
+	}
+
+	/**
+	 * @param $name
+	 * @return Database
+	 */
+	protected function db($name) {
+		return $this->databases[$name];
 	}
 }
