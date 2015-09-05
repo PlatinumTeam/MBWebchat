@@ -11,7 +11,7 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
-		$client = new ChatClient($conn);
+		$client = new ChatClient($this, $conn);
 		$this->clients->attach($conn, $client);
 	}
 	public function onMessage(ConnectionInterface $conn, $msg) {

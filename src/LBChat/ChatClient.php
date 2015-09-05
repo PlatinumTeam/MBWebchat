@@ -3,15 +3,17 @@ namespace LBChat;
 use Ratchet\ConnectionInterface;
 
 class ChatClient {
+	private $server;
 	private $connection;
 	private $username;
 
-	public function __construct(ConnectionInterface $connection) {
+	public function __construct(ChatServer $server, ConnectionInterface $connection) {
+		$this->server = $server;
 		$this->connection = $connection;
 	}
 
 	public function interpretMessage($msg) {
-		$command = Command\CommandFactory::construct($this, $msg);
+		$command = Command\CommandFactory::construct($this, $this->server, $msg);
 
 		if ($command === null) {
 			//Error

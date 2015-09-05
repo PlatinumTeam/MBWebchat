@@ -1,11 +1,14 @@
 <?php
 namespace LBChat\Command;
 
+use LBChat\ChatClient;
+use LBChat\ChatServer;
+
 class KeyCommand extends Command {
 	protected $key;
 
-	public function __construct($client, $key) {
-		parent::__construct($client);
+	public function __construct(ChatClient $client, ChatServer $server, $key) {
+		parent::__construct($client, $server);
 		$this->key = $key;
 	}
 
