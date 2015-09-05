@@ -6,15 +6,18 @@ use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
 class ChatServer implements MessageComponentInterface {
+	protected $connections;
 	protected $clients;
 
 	public function __construct() {
+		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
 		$client = new ChatClient($this, $conn);
-		$this->clients->attach($conn, $client);
+		$this->connections->attach($conn, $client);
+		$this->clients->attach($client);
 	}
 	public function onMessage(ConnectionInterface $conn, $msg) {
 		$from = $this->resolveClient($conn);
@@ -47,16 +50,14 @@ class ChatServer implements MessageComponentInterface {
 	 * @return ChatClient
 	 */
 	protected function resolveClient(ConnectionInterface $conn) {
-		return $this->clients[$conn];
+		return $this->connections[$conn];
 	}
 	/**
 	 * @param                 $msg
 	 * @param ChatClient|null $exclude
 	 */
 	public function broadcast($msg, ChatClient $exclude = null) {
-		foreach ($this->clients as $conn) {
-			$client = $this->resolveClient($conn);
-
+		foreach ($this->clients as $client) {
 			if ($exclude !== null && $client->compare($exclude))
 				continue;
 
@@ -65,9 +66,7 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	public function broadcastCommand(IServerCommand $command, ChatClient $exclude = null) {
-		foreach ($this->clients as $conn) {
-			$client = $this->resolveClient($conn);
-
+		foreach ($this->clients as $client) {
 			if ($exclude !== null && $client->compare($exclude))
 				continue;
 
@@ -77,8 +76,7 @@ class ChatServer implements MessageComponentInterface {
 
 	public function notify(ChatClient $sender, $type, $access = 0, $message = "") {
 		//Notify all clients
-		foreach ($this->clients as $conn) {
-			$client = $this->resolveClient($conn);
+		foreach ($this->clients as $client) {
 			if ($client->getAccess() >= $access)
 				$client->notify($sender, $type, $access, $message);
 		}
@@ -89,8 +87,7 @@ class ChatServer implements MessageComponentInterface {
 		$command = new Server\UserlistCommand($this);
 		$command->start($recipient);
 
-		foreach ($this->clients as $conn) {
-			$client = $this->resolveClient($conn);
+		foreach ($this->clients as $client) {
 			$command->send($recipient, $client);
 		}
 
@@ -98,8 +95,7 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	public function sendAllUserlists() {
-		foreach ($this->clients as $conn) {
-			$client = $this->resolveClient($conn);
+		foreach ($this->clients as $client) {
 			$this->sendUserlist($client);
 		}
 	}
