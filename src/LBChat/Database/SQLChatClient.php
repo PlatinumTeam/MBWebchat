@@ -54,11 +54,50 @@ class SQLChatClient extends ChatClient {
 	}
 
 	public function getDisplayName() {
-		$username = parent::getUsername();
-		$query = $this->db("joomla")->prepare("SELECT `name` FROM `bv2xj_users` WHERE `username` = :username");
+		$id = $this->getId();
+		$query = $this->db("joomla")->prepare("SELECT `name` FROM `bv2xj_users` WHERE `id` = :id");
+		$query->bindParam(":id", $id);
+		$query->execute();
+		return $query->fetchColumn(0);
+	}
+
+	public function getAccess() {
+		$username = $this->getUsername();
+		$query = $this->db("platinum")->prepare("SELECT `access` FROM `users` WHERE `username` = :username");
 		$query->bindParam(":username", $username);
 		$query->execute();
 		return $query->fetchColumn(0);
+	}
+
+	public function getColor() {
+		$id = $this->getId();
+		$query = $this->db("joomla")->prepare("SELECT `colorValue` FROM `bv2xj_users` WHERE `id` = :id");
+		$query->bindParam(":id", $id);
+		$query->execute();
+		return $query->fetchColumn(0);
+	}
+
+	public function getTitles() {
+		$id = $this->getId();
+		$query = $this->db("joomla")->prepare(
+			"SELECT `title`, 'flair' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleFlair` FROM `bv2xj_users` WHERE `id` = :uid)
+				UNION
+			SELECT `title`, 'prefix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titlePrefix` FROM `bv2xj_users` WHERE `id` = :uid)
+				UNION
+			SELECT `title`, 'suffix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleSuffix` FROM `bv2xj_users` WHERE `id` = :uid)");
+		$query->bindParam(":uid", $id);
+		$query->execute();
+
+		if (!$query->rowCount())
+			return array("", "", "");
+
+		$rows = $query->fetchAll();
+
+		return array(
+			@$rows[0]["title"],
+			@$rows[1]["title"],
+			@$rows[2]["title"]
+		);
 	}
 
 	/**
