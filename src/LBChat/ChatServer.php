@@ -15,9 +15,7 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
-		$client = new ChatClient($this, $conn);
-		$this->connections->attach($conn, $client);
-		$this->clients->attach($client);
+		$this->addClient($conn);
 	}
 	public function onMessage(ConnectionInterface $conn, $msg) {
 		$from = $this->resolveClient($conn);
@@ -37,12 +35,25 @@ class ChatServer implements MessageComponentInterface {
 		$client = $this->resolveClient($conn);
 		$client->onLogout();
 
-		$this->clients->detach($conn);
+		$this->removeClient($conn);
 	}
 	public function onError(ConnectionInterface $conn, \Exception $e) {
 		echo "An error has occurred: {$e->getMessage()}\n";
 
 		$conn->close();
+	}
+
+	protected function addClient(ConnectionInterface $conn) {
+		$client = new ChatClient($this, $conn);
+		$this->connections->attach($conn, $client);
+		$this->clients->attach($client);
+	}
+
+	protected function removeClient(ConnectionInterface $conn) {
+		$client = $this->resolveClient($conn);
+
+		$this->connections->detach($conn);
+		$this->clients->detach($client);
 	}
 
 	/**
