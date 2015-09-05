@@ -35,9 +35,10 @@ class UserlistCommand extends Command implements IServerCommand {
 		$prefix = $titles[1];
 		$suffix = $titles[2];
 
-		$client->send("USER COLORS $username $color $color $color\n");
-		$client->send("USER TITLES $flair $prefix $suffix\n");
-		$client->send("USER NAME $username $access $location $display\n");
+		$client->send("USER INFO $username $access $location $display $color $flair $prefix $suffix");
+		$client->send("USER COLORS $username $color $color $color");
+		$client->send("USER TITLES $flair $prefix $suffix");
+		$client->send("USER NAME $username $access $location $display");
 	}
 	protected function done(ChatClient $client) {
 		$client->send("USER DONE");
