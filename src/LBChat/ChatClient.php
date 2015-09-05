@@ -31,12 +31,23 @@ class ChatClient {
 		$this->connection->send($msg);
 	}
 
+	public function notify(ChatClient $sender, $type, $access = 0, $message = "") {
+		$username = $sender->getUsername();
+		$display = $sender->getUsername(); //TODO: Display names
+
+		//TODO: Send commands
+		$this->send("NOTIFY $type $access $username $display $message");
+	}
+
 	public function onLogin() {
-		$this->send("LOGGED\n");
+		//TODO: Send commands
+		$this->send("LOGGED");
+
+		$this->server->notify($this, "login", -1, $this->location);
 	}
 
 	public function onLogout() {
-
+		$this->server->notify($this, "logout", -1);
 	}
 
 	public function compare(ChatClient $other) {

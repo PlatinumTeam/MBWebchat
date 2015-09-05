@@ -57,4 +57,13 @@ class ChatServer implements MessageComponentInterface {
 			$client->send($msg);
 		}
 	}
+
+	public function notify(ChatClient $sender, $type, $access = 0, $message = "") {
+		//Notify all clients
+		foreach ($this->clients as $conn) {
+			$client = $this->resolveClient($conn);
+			if ($client->getAccess() >= $access)
+				$client->notify($sender, $type, $access, $message);
+		}
+	}
 }
