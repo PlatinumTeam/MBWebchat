@@ -35,4 +35,8 @@ abstract class LBServerSupport {
 		$query->execute();
 		return $query->fetchAll(\PDO::FETCH_ASSOC);
 	}
+
+	public static function getWelcomeMessage() {
+		return self::getPreference("welcome") . "\\n\\nTODO: Qotd";
+	}
 }

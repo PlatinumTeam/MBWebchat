@@ -98,6 +98,14 @@ class ChatClient {
 		$this->access = $access;
 	}
 
+	public function getPrivilege() {
+		switch ($this->getAccess()) {
+		case -3: return 0;
+		case 3:  return 0;
+		default: return $this->getAccess();
+		}
+	}
+
 	public function getColor() {
 		return $this->color;
 	}
