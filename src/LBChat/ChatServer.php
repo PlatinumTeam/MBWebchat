@@ -1,5 +1,6 @@
 <?php
 namespace LBChat;
+use LBChat\Command\Server\IServerCommand;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
@@ -59,6 +60,17 @@ class ChatServer implements MessageComponentInterface {
 				continue;
 
 			$client->send($msg);
+		}
+	}
+
+	public function broadcastCommand(IServerCommand $command, ChatClient $exclude = null) {
+		foreach ($this->clients as $conn) {
+			$client = $this->resolveClient($conn);
+
+			if ($exclude !== null && $client->compare($exclude))
+				continue;
+
+			$command->execute($client);
 		}
 	}
 
