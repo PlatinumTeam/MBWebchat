@@ -3,8 +3,8 @@ namespace LBChat;
 use Ratchet\ConnectionInterface;
 
 class ChatClient {
-	private $server;
-	private $connection;
+	protected $server;
+	protected $connection;
 	private $username;
 	private $display;
 	private $location;

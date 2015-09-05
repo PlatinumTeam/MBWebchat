@@ -2,6 +2,7 @@
 namespace LBChat\Database;
 
 use LBChat\ChatClient;
+use LBChat\Command\Server\InfoCommand;
 use LBChat\Integration\JoomlaUserSupport;
 use LBChat\Integration\LBUserSupport;
 use Ratchet\ConnectionInterface;
@@ -29,6 +30,9 @@ class SQLChatClient extends ChatClient {
 		$query->bindParam(":access", $this->getAccess());
 		$query->bindParam(":location", $this->getLocation());
 		$query->execute();
+
+		$command = new InfoCommand($this->server);
+		$command->execute($this);
 	}
 
 	public function onLogout() {
