@@ -79,15 +79,15 @@ class ChatServer implements MessageComponentInterface {
 			$client = $this->resolveClient($conn);
 
 			$username = $client->getUsername();
-			$display = $client->getDisplayName();
-			$access = $client->getAccess();
+			$display  = $client->getDisplayName();
+			$access   = $client->getAccess();
 			$location = $client->getLocation();
 
-			$color = "000000"; //TODO: User colors
-			//TODO: User titles
-			$flair = "";
-			$prefix = "";
-			$suffix = "";
+			$color  = $client->getColor();
+			$titles = $client->getTitles();
+			$flair  = $titles[0];
+			$prefix = $titles[1];
+			$suffix = $titles[2];
 
 			$recipient->send("USER COLORS $username $color $color $color\n");
 			$recipient->send("USER TITLES $flair $prefix $suffix\n");
