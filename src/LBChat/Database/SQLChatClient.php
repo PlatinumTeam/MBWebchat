@@ -37,6 +37,14 @@ class SQLChatClient extends ChatClient {
 		$query->execute();
 	}
 
+	public function getId() {
+		$username = $this->getUsername();
+		$query = $this->db("joomla")->prepare("SELECT `id` FROM `bv2xj_users` WHERE `username` = :username");
+		$query->bindParam(":username", $username);
+		$query->execute();
+		return $query->fetchColumn(0);
+	}
+
 	public function getUsername() {
 		$username = parent::getUsername();
 		$query = $this->db("platinum")->prepare("SELECT `username` FROM `users` WHERE `username` = :username");

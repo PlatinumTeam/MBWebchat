@@ -61,6 +61,10 @@ class ChatClient {
 		return $other->connection === $this->connection;
 	}
 
+	public function getId() {
+		return $this->connection->resourceId;
+	}
+
 	public function getUsername() {
 		return $this->username;
 	}
