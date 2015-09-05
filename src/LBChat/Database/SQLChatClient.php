@@ -2,6 +2,8 @@
 namespace LBChat\Database;
 
 use LBChat\ChatClient;
+use LBChat\Integration\JoomlaUserSupport;
+use LBChat\Integration\LBUserSupport;
 use Ratchet\ConnectionInterface;
 
 class SQLChatClient extends ChatClient {
@@ -38,66 +40,27 @@ class SQLChatClient extends ChatClient {
 	}
 
 	public function getId() {
-		$username = $this->getUsername();
-		$query = $this->db("joomla")->prepare("SELECT `id` FROM `bv2xj_users` WHERE `username` = :username");
-		$query->bindParam(":username", $username);
-		$query->execute();
-		return $query->fetchColumn(0);
+		return JoomlaUserSupport::getId($this->getUsername());
 	}
 
 	public function getUsername() {
-		$username = parent::getUsername();
-		$query = $this->db("platinum")->prepare("SELECT `username` FROM `users` WHERE `username` = :username");
-		$query->bindParam(":username", $username);
-		$query->execute();
-		return $query->fetchColumn(0);
+		return LBUserSupport::getUsername(parent::getUsername());
 	}
 
 	public function getDisplayName() {
-		$id = $this->getId();
-		$query = $this->db("joomla")->prepare("SELECT `name` FROM `bv2xj_users` WHERE `id` = :id");
-		$query->bindParam(":id", $id);
-		$query->execute();
-		return $query->fetchColumn(0);
+		return JoomlaUserSupport::getDisplayName($this->getUsername());
 	}
 
 	public function getAccess() {
-		$username = $this->getUsername();
-		$query = $this->db("platinum")->prepare("SELECT `access` FROM `users` WHERE `username` = :username");
-		$query->bindParam(":username", $username);
-		$query->execute();
-		return $query->fetchColumn(0);
+		return LBUserSupport::getAccess($this->getUsername());
 	}
 
 	public function getColor() {
-		$id = $this->getId();
-		$query = $this->db("joomla")->prepare("SELECT `colorValue` FROM `bv2xj_users` WHERE `id` = :id");
-		$query->bindParam(":id", $id);
-		$query->execute();
-		return $query->fetchColumn(0);
+		return JoomlaUserSupport::getColor($this->getUsername());
 	}
 
 	public function getTitles() {
-		$id = $this->getId();
-		$query = $this->db("joomla")->prepare(
-			"SELECT `title`, 'flair' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleFlair` FROM `bv2xj_users` WHERE `id` = :uid)
-				UNION
-			SELECT `title`, 'prefix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titlePrefix` FROM `bv2xj_users` WHERE `id` = :uid)
-				UNION
-			SELECT `title`, 'suffix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleSuffix` FROM `bv2xj_users` WHERE `id` = :uid)");
-		$query->bindParam(":uid", $id);
-		$query->execute();
-
-		if (!$query->rowCount())
-			return array("", "", "");
-
-		$rows = $query->fetchAll();
-
-		return array(
-			@$rows[0]["title"],
-			@$rows[1]["title"],
-			@$rows[2]["title"]
-		);
+		return JoomlaUserSupport::getTitles($this->getUsername());
 	}
 
 	/**
