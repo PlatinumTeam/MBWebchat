@@ -3,6 +3,7 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\Server;
 
 class ChatCommand extends Command implements IClientCommand {
 
@@ -14,16 +15,7 @@ class ChatCommand extends Command implements IClientCommand {
 	}
 
 	public function parse() {
-		$username = $this->client->getUsername();
-		$display = $this->client->getDisplayName();
-		$destination = ""; //TODO: Add private messages
-		$access = 0; //TODO: Add access support
-
-		//TODO: Invisible user chats to mods+ only
-		//TODO: Shadow banning
-
-		//Broadcast a chat message to everyone
-		//TODO: Send commands
-		$this->server->broadcast("CHAT $username $display $destination $access {$this->message}");
+		$command = new Server\ChatCommand($this->server, $this->client, null, $this->message);
+		$this->server->broadcastCommand($command);
 	}
 }
