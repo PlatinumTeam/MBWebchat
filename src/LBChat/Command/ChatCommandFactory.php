@@ -22,7 +22,7 @@ abstract class ChatCommandFactory {
 		$first = strtolower($first); //Case-insensitive comparison
 		$first = substr($first, 1); //Strip off the / at the start of the command
 
-		if (array_key_exists($first, self::$commandTypes)) {
+		if (array_key_exists((string)$first, self::$commandTypes)) {
 			$constructor = self::$commandTypes[$first];
 			return call_user_func($constructor, $client, $server, $rest);
 		} else {
