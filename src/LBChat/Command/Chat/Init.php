@@ -21,7 +21,7 @@ function _addCommand($name, $class = null) {
 		$class = "LBChat\\Command\\Chat\\{$name}Command";
 
 	ChatCommandFactory::addCommandType($name, function(ChatServer $server, ChatClient $client, $rest) use ($class) {
-		return call_user_func(array($class, "init"), $server, $server, $rest);
+		return call_user_func(array($class, "init"), $server, $client, $rest);
 	});
 }
 
