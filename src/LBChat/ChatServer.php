@@ -4,14 +4,24 @@ use LBChat\Command\Server;
 use LBChat\Command\Server\IServerCommand;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+use React\EventLoop\LoopInterface;
 
 class ChatServer implements MessageComponentInterface {
 	protected $connections;
 	protected $clients;
 
+	/**
+	 * @var LoopInterface $scheduler
+	 */
+	protected $scheduler;
+
 	public function __construct() {
 		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
+	}
+
+	public function setScheduler(LoopInterface $scheduler) {
+		$this->scheduler = $scheduler;
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
@@ -128,5 +138,13 @@ class ChatServer implements MessageComponentInterface {
 			$client = $this->resolveClient($conn);
 			call_user_func($callback, $client);
 		}
+	}
+
+	public function schedule($time, callable $callback) {
+		$this->scheduler->addTimer($time, $callback);
+	}
+
+	public function scheduleLoop($interval, callable $callback) {
+		$this->scheduler->addPeriodicTimer($interval, $callback);
 	}
 }

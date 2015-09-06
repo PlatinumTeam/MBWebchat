@@ -26,13 +26,16 @@ JoomlaUserSupport::setDatabase($databases["joomla"]);
 LBUserSupport::setDatabase($databases["platinum"]);
 LBServerSupport::setDatabase($databases["platinum"]);
 
+$chatServer = new SQLChatServer($databases);
+
 $server = IoServer::factory(
 	new HttpServer(
 		new WsServer(
-			new SQLChatServer($databases)
+			$chatServer
 		)
 	),
 	39002
 );
 
+$chatServer->setScheduler($server->loop);
 $server->run();
