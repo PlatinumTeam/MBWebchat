@@ -32,6 +32,7 @@ _addCommands(
 		"Key",
 		"Location",
 		"Ping",
-		"Userlist"
+		"Userlist",
+		"Verify"
 	)
 );
