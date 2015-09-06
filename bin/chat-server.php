@@ -10,6 +10,7 @@ use LBChat\Command\ChatCommandFactory;
 use LBChat\Integration\JoomlaUserSupport;
 use LBChat\Integration\LBUserSupport;
 use LBChat\Integration\LBServerSupport;
+use LBChat\Misc\PlainServer;
 
 //Load up 3rd party libraries
 require dirname(__DIR__) . "/vendor/autoload.php";
@@ -39,6 +40,14 @@ $server = IoServer::factory(
 		)
 	),
 	39002
+);
+$server2 = IoServer::factory(
+	new PlainServer(
+		$chatServer
+	),
+	39003,
+	"0.0.0.0",
+	$server->loop
 );
 
 //Give the server the scheduler so it can do callbacks
