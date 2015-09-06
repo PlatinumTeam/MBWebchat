@@ -12,6 +12,8 @@ class ChatClient {
 	private $access;
 	private $color;
 	private $titles;
+	private $muted;
+	private $muteTime;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
 		$this->server = $server;
@@ -20,6 +22,8 @@ class ChatClient {
 		$this->access = 0;
 		$this->color = "000000";
 		$this->titles = array("", "", "");
+		$this->muted = false;
+		$this->muteTime = 0;
 	}
 
 	public function interpretMessage($msg) {
@@ -139,5 +143,32 @@ class ChatClient {
 			//Login succeeded
 			$this->onLogin();
 		}
+	}
+
+	/**
+	 * Called once every second.
+	 */
+	public function onSecondAdvance() {
+		if ($this->muted) {
+			$this->muteTime--;
+			if ($this->muteTime <= 0) {
+				$this->muteTime = 0;
+				$this->muted = false;
+			}
+		}
+	}
+
+	public function isMuted() {
+		return $this->muted;
+	}
+
+	public function addMuteTime($time) {
+		$this->muteTime += $time;
+		$this->muted = true;
+	}
+
+	public function cancelMute() {
+		$this->muteTime = 0;
+		$this->muted = false;
 	}
 }
