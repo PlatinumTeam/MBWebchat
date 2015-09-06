@@ -5,7 +5,13 @@ use LBChat\Command\Server\IServerCommand;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use React\EventLoop\LoopInterface;
+use React\EventLoop\Timer\TimerInterface;
 
+/**
+ * Class ChatServer
+ * A basic chat server implementation that manages clients distributes commands.
+ * @package LBChat
+ */
 class ChatServer implements MessageComponentInterface {
 	protected $connections;
 	protected $clients;
@@ -20,13 +26,27 @@ class ChatServer implements MessageComponentInterface {
 		$this->clients = new \SplObjectStorage();
 	}
 
+	/**
+	 * Assign the server a loop scheduler for scheduling events
+	 * @param LoopInterface $scheduler
+	 */
 	public function setScheduler(LoopInterface $scheduler) {
 		$this->scheduler = $scheduler;
 	}
 
+	/**
+	 * Called whenever a new client joins the server.
+	 * @param ConnectionInterface $conn
+	 */
 	public function onOpen(ConnectionInterface $conn) {
 		$this->addClient($conn);
 	}
+
+	/**
+	 * Called whenever a client sends a message to the server
+	 * @param ConnectionInterface $conn
+	 * @param string              $msg
+	 */
 	public function onMessage(ConnectionInterface $conn, $msg) {
 		$from = $this->resolveClient($conn);
 
@@ -41,24 +61,43 @@ class ChatServer implements MessageComponentInterface {
 			$from->interpretMessage($line);
 		}
 	}
+
+	/**
+	 * Called whenever a client disconnects from the server
+	 * @param ConnectionInterface $conn
+	 */
 	public function onClose(ConnectionInterface $conn) {
 		$client = $this->resolveClient($conn);
 		$client->onLogout();
 
 		$this->removeClient($conn);
 	}
+
+	/**
+	 * Called whenever there is a connection error
+	 * @param ConnectionInterface $conn
+	 * @param \Exception          $e
+	 */
 	public function onError(ConnectionInterface $conn, \Exception $e) {
 		echo "An error has occurred: {$e->getMessage()}\n";
 
 		$conn->close();
 	}
 
+	/**
+	 * When a client connects, this method adds them to the internal clients list
+	 * @param ConnectionInterface $conn
+	 */
 	protected function addClient(ConnectionInterface $conn) {
 		$client = new ChatClient($this, $conn);
 		$this->connections->attach($conn, $client);
 		$this->clients->attach($client);
 	}
 
+	/**
+	 * When a client disconnects, this method removes them from the list
+	 * @param ConnectionInterface $conn
+	 */
 	protected function removeClient(ConnectionInterface $conn) {
 		$client = $this->resolveClient($conn);
 
@@ -67,6 +106,7 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	/**
+	 * Finds the ChatClient object associated with a given ConnectionInterface
 	 * @param ConnectionInterface $conn
 	 * @return ChatClient
 	 */
@@ -75,6 +115,8 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	/**
+	 * Finds a client in the server by name. Searches first by username, then by display name
+	 * if no clients are found.
 	 * @param $name
 	 * @return ChatClient
 	 */
@@ -96,6 +138,7 @@ class ChatServer implements MessageComponentInterface {
 		return null;
 	}
 	/**
+	 * Send data to every client in the server, with an optional excluded client.
 	 * @param                 $msg
 	 * @param ChatClient|null $exclude
 	 */
@@ -110,6 +153,11 @@ class ChatServer implements MessageComponentInterface {
 		}
 	}
 
+	/**
+	 * Execute a server command on every client in the server, with an optional excluded client.
+	 * @param IServerCommand  $command
+	 * @param ChatClient|null $exclude
+	 */
 	public function broadcastCommand(IServerCommand $command, ChatClient $exclude = null) {
 		foreach ($this->connections as $conn) {
 			$client = $this->resolveClient($conn);
@@ -121,30 +169,31 @@ class ChatServer implements MessageComponentInterface {
 		}
 	}
 
-	public function sendUserlist(ChatClient $recipient) {
-		//Send them a userlist
-		$command = new Server\UserlistCommand($this, $this->clients);
-		$command->execute($recipient);
-	}
-
+	/**
+	 * Update the user lists of all connected clients
+	 */
 	public function sendAllUserlists() {
-		$this->eachClient(function(ChatClient $client) {
-			$this->sendUserlist($client);
-		});
+		$command = new Server\UserlistCommand($this, $this->clients);
+		$this->broadcastCommand($command);
 	}
 
-	public function eachClient(callable $callback) {
-		foreach ($this->connections as $conn) {
-			$client = $this->resolveClient($conn);
-			call_user_func($callback, $client);
-		}
-	}
-
+	/**
+	 * Schedule a callback to be evaluated after a specific amount of time
+	 * @param          $time
+	 * @param callable $callback
+	 * @return TimerInterface
+	 */
 	public function schedule($time, callable $callback) {
-		$this->scheduler->addTimer($time, $callback);
+		return $this->scheduler->addTimer($time, $callback);
 	}
 
+	/**
+	 * Schedule a callback to be evaluated on a constant interval
+	 * @param          $interval
+	 * @param callable $callback
+	 * @return TimerInterface
+	 */
 	public function scheduleLoop($interval, callable $callback) {
-		$this->scheduler->addPeriodicTimer($interval, $callback);
+		return $this->scheduler->addPeriodicTimer($interval, $callback);
 	}
 }
