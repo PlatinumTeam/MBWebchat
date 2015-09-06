@@ -29,6 +29,13 @@ class ChatServer implements MessageComponentInterface {
 		ServerChatClient::create($this);
 		$this->connections->attach(ServerChatClient::getConnection(), ServerChatClient::getClient());
 		$this->clients->attach(ServerChatClient::getClient());
+
+		$this->scheduleLoop(1, function() {
+			foreach ($this->connections as $conn) {
+				$client = $this->resolveClient($conn);
+				$client->onSecondAdvance();
+			}
+		});
 	}
 
 	/**

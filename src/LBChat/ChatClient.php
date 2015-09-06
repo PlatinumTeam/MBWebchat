@@ -1,5 +1,6 @@
 <?php
 namespace LBChat;
+use LBChat\Command\Server\ChatCommand;
 use LBChat\Command\Server\NotifyCommand;
 use Ratchet\ConnectionInterface;
 
@@ -12,6 +13,8 @@ class ChatClient {
 	private $access;
 	private $color;
 	private $titles;
+	private $muted;
+	private $muteTime;
 	private $visible;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
@@ -21,6 +24,8 @@ class ChatClient {
 		$this->access = 0;
 		$this->color = "000000";
 		$this->titles = array("", "", "");
+		$this->muted = false;
+		$this->muteTime = 0;
 		$this->visible = true;
 	}
 
@@ -149,5 +154,33 @@ class ChatClient {
 			//Login succeeded
 			$this->onLogin();
 		}
+	}
+
+	/**
+	 * Called once every second.
+	 */
+	public function onSecondAdvance() {
+		if ($this->muted) {
+			$this->muteTime--;
+			if ($this->muteTime <= 0) {
+				$this->cancelMute();
+			}
+		}
+	}
+
+	public function isMuted() {
+		return $this->muted;
+	}
+
+	public function addMuteTime($time) {
+		$this->muteTime += $time;
+		$this->muted = true;
+	}
+
+	public function cancelMute() {
+		$this->muteTime = 0;
+		$this->muted = false;
+		$chat = new ChatCommand($this->server, $this, $this, "You have been unmuted.");
+		$chat->execute($this);
 	}
 }
