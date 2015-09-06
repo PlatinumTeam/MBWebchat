@@ -145,7 +145,7 @@ class ChatClient {
 			$this->location = 3;
 			break;
 		case "password":
-			$status = Login\Helper::tryKey($this->getUsername(), $data);
+			$status = Login\Helper::tryPassword($this->getUsername(), $data);
 			//Usually this is in-game
 			$this->location = 0;
 			break;
