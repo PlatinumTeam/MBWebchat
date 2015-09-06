@@ -30,6 +30,7 @@ _addCommands(
 	array(
 		"PQ",
 		"Whisper",
-		"Send"
+		"Send",
+		"Mute"
 	)
 );
