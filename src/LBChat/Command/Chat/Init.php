@@ -28,6 +28,8 @@ function _addCommand($name, $class = null) {
 //Add all the commands
 _addCommands(
 	array(
-		"PQ"
+		"PQ",
+		"Whisper",
+		"Send"
 	)
 );
