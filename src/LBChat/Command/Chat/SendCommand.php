@@ -8,8 +8,8 @@ use LBChat\Misc\ServerChatClient;
 class SendCommand extends Command implements IChatCommand {
 	protected $message;
 
-	public function __construct(ChatClient $client, ChatServer $server, $message) {
-		parent::__construct($client, $server);
+	public function __construct(ChatServer $server, ChatClient $client, $message) {
+		parent::__construct($server, $client);
 		$this->message = $message;
 	}
 
@@ -17,8 +17,8 @@ class SendCommand extends Command implements IChatCommand {
 		ServerChatClient::sendMessage(true, null, $this->message);
 	}
 
-	public static function init(ChatClient $client, ChatServer $server, $rest) {
-		return new SendCommand($client, $server, $rest);
+	public static function init(ChatServer $server, ChatClient $client, $rest) {
+		return new SendCommand($server, $client, $rest);
 	}
 
 }

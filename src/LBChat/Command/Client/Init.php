@@ -19,8 +19,8 @@ function _addCommand($name, $class = null) {
 	if ($class === null)
 		$class = "LBChat\\Command\\Client\\{$name}Command";
 
-	CommandFactory::addCommandType($name, function(ChatClient $client, ChatServer $server, $rest) use ($class) {
-		return call_user_func(array($class, "init"), $client, $server, $rest);
+	CommandFactory::addCommandType($name, function(ChatServer $server, ChatClient $client, $rest) use ($class) {
+		return call_user_func(array($class, "init"), $server, $client, $rest);
 	});
 }
 

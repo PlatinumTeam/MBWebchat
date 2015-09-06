@@ -12,7 +12,7 @@ abstract class CommandFactory {
 	 * Construct a client command object from a given message, that can be executed.
 	 * @return IClientCommand
 	 */
-	public static function construct(ChatClient $client, ChatServer $server, $msg) {
+	public static function construct(ChatServer $server, ChatClient $client, $msg) {
 		$words = explode(" ", $msg);
 		if (count($words) == 0)
 			return null;
@@ -22,7 +22,7 @@ abstract class CommandFactory {
 
 		if (array_key_exists($first, self::$commandTypes)) {
 			$constructor = self::$commandTypes[$first];
-			return call_user_func($constructor, $client, $server, $rest);
+			return call_user_func($constructor, $server, $client, $rest);
 		} else {
 			return null;
 		}

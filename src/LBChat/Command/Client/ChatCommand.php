@@ -13,8 +13,8 @@ class ChatCommand extends Command implements IClientCommand {
 	protected $recipient;
 	protected $message;
 
-	public function __construct(ChatClient $client, ChatServer $server, ChatClient $recipient = null, $message) {
-		parent::__construct($client, $server);
+	public function __construct(ChatServer $server, ChatClient $client, ChatClient $recipient = null, $message) {
+		parent::__construct($server, $client);
 		$this->message = $message;
 	}
 
@@ -27,7 +27,7 @@ class ChatCommand extends Command implements IClientCommand {
 		$this->server->broadcastCommand($command);
 	}
 
-	public static function init(ChatClient $client, ChatServer $server, $rest) {
+	public static function init(ChatServer $server, ChatClient $client, $rest) {
 		//<recipient> <message ...>
 		$words = explode(" ", $rest);
 		//Pop the first word off and resolve it
@@ -36,12 +36,12 @@ class ChatCommand extends Command implements IClientCommand {
 
 		//If we can find a chat command (/something) then we should use that instead of the default
 		// chat command behavior.
-		$command = ChatCommandFactory::construct($client, $server, $message);
+		$command = ChatCommandFactory::construct($server, $client, $message);
 		if ($command !== null) {
 			return $command;
 		}
 
 		//No command, just send a basic chat message.
-		return new ChatCommand($client, $server, $recipient, $message);
+		return new ChatCommand($server, $client, $recipient, $message);
 	}
 }

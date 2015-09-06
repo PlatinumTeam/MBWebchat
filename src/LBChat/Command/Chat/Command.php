@@ -6,13 +6,13 @@ use LBChat\ChatServer;
 
 abstract class Command {
 	/**
-	 * @var ChatClient $client The client to which the command is attached
-	 */
-	protected $client;
-	/**
 	 * @var ChatServer $server The chat server
 	 */
 	protected $server;
+	/**
+	 * @var ChatClient $client The client to which the command is attached
+	 */
+	protected $client;
 	/**
 	 * @var string $name The command's name
 	 */
@@ -22,8 +22,8 @@ abstract class Command {
 	 */
 	protected $data;
 
-	public function __construct(ChatClient $client, ChatServer $server) {
-		$this->client = $client;
+	public function __construct(ChatServer $server, ChatClient $client) {
 		$this->server = $server;
+		$this->client = $client;
 	}
 }

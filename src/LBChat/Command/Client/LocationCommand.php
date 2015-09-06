@@ -10,8 +10,8 @@ class LocationCommand extends Command implements IClientCommand {
 
 	protected $location;
 
-	public function __construct(ChatClient $client, ChatServer $server, $location) {
-		parent::__construct($client, $server);
+	public function __construct(ChatServer $server, ChatClient $client, $location) {
+		parent::__construct($server, $client);
 		$this->location = (int)$location;
 	}
 
@@ -21,7 +21,7 @@ class LocationCommand extends Command implements IClientCommand {
 		$this->server->sendAllUserlists();
 	}
 
-	public static function init(ChatClient $client, ChatServer $server, $rest) {
-		return new LocationCommand($client, $server, $rest);
+	public static function init(ChatServer $server, ChatClient $client, $rest) {
+		return new LocationCommand($server, $client, $rest);
 	}
 }

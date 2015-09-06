@@ -12,8 +12,8 @@ class UserlistCommand extends Command implements IClientCommand {
 		$this->server->sendUserlist($this->client);
 	}
 
-	public static function init(ChatClient $client, ChatServer $server, $rest) {
-		return new UserlistCommand($client, $server);
+	public static function init(ChatServer $server, ChatClient $client, $rest) {
+		return new UserlistCommand($server, $client);
 	}
 
 }

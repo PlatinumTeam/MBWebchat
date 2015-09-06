@@ -34,7 +34,7 @@ class ChatClient {
 	}
 
 	public function interpretMessage($msg) {
-		$command = Command\CommandFactory::construct($this, $this->server, $msg);
+		$command = Command\CommandFactory::construct($this->server, $this, $msg);
 
 		if ($command === null) {
 			$command = new InvalidCommand($this->server);
@@ -184,7 +184,7 @@ class ChatClient {
 	public function cancelMute() {
 		$this->muteTime = 0;
 		$this->muted = false;
-		$chat = new WhisperCommand(ServerChatClient::getClient(), $this->server, $this, "You have been unmuted.");
+		$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this, "You have been unmuted.");
 		$chat->execute();
 	}
 }

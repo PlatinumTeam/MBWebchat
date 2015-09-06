@@ -11,7 +11,7 @@ class PQCommand extends Command implements IChatCommand {
 		$this->server->broadcastCommand($chat);
 	}
 
-	public static function init(ChatClient $client, ChatServer $server, $rest) {
-		return new PQCommand($client, $server);
+	public static function init(ChatServer $server, ChatClient $client, $rest) {
+		return new PQCommand($server, $client);
 	}
 }

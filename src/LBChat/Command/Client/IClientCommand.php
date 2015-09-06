@@ -10,5 +10,5 @@ interface IClientCommand {
 	 */
 	public function execute();
 
-	public static function init(ChatClient $client, ChatServer $server, $rest);
+	public static function init(ChatServer $server, ChatClient $client, $rest);
 }

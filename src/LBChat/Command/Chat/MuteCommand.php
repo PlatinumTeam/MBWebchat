@@ -11,8 +11,8 @@ class MuteCommand extends Command implements IChatCommand {
 	protected $recipient;
 	protected $time;
 
-	public function __construct(ChatClient $client, ChatServer $server, ChatClient $recipient = null, $time) {
-		parent::__construct($client, $server);
+	public function __construct(ChatServer $server, ChatClient $client, ChatClient $recipient = null, $time) {
+		parent::__construct($server, $client);
 
 		$this->recipient = $recipient;
 		$this->time = $time;
@@ -39,11 +39,11 @@ class MuteCommand extends Command implements IChatCommand {
 		$this->recipient->addMuteTime($this->time);
 	}
 
-	public static function init(ChatClient $client, ChatServer $server, $rest) {
+	public static function init(ChatServer $server, ChatClient $client, $rest) {
 		$words = explode(" ", $rest);
 		$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
 		if ($recipient === null)
 			return null;
-		return new MuteCommand($client, $server, $recipient, $words[0]);
+		return new MuteCommand($server, $client, $recipient, $words[0]);
 	}
 }

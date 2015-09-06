@@ -9,8 +9,8 @@ class IdentifyCommand extends Command implements IClientCommand {
 
 	protected $username;
 
-	public function __construct(ChatClient $client, ChatServer $server, $username) {
-		parent::__construct($client, $server);
+	public function __construct(ChatServer $server, ChatClient $client, $username) {
+		parent::__construct($server, $client);
 		$this->username = $username;
 	}
 
@@ -18,7 +18,7 @@ class IdentifyCommand extends Command implements IClientCommand {
 		$this->client->setUsername($this->username);
 	}
 
-	public static function init(ChatClient $client, ChatServer $server, $rest) {
-		return new IdentifyCommand($client, $server, $rest);
+	public static function init(ChatServer $server, ChatClient $client, $rest) {
+		return new IdentifyCommand($server, $client, $rest);
 	}
 }

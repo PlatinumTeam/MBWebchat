@@ -9,8 +9,8 @@ class PingCommand extends Command implements IClientCommand {
 
 	protected $data;
 
-	public function __construct(ChatClient $client, ChatServer $server, $data) {
-		parent::__construct($client, $server);
+	public function __construct(ChatServer $server, ChatClient $client, $data) {
+		parent::__construct($server, $client);
 		$this->data = $data;
 	}
 
@@ -19,8 +19,8 @@ class PingCommand extends Command implements IClientCommand {
 		$this->client->send("PONG {$this->data}");
 	}
 
-	public static function init(ChatClient $client, ChatServer $server, $rest) {
-		return new PingCommand($client, $server, $rest);
+	public static function init(ChatServer $server, ChatClient $client, $rest) {
+		return new PingCommand($server, $client, $rest);
 	}
 
 }
