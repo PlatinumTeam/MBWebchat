@@ -2,6 +2,8 @@
 namespace LBChat;
 use LBChat\Command\Chat\WhisperCommand;
 use LBChat\Command\Server\ChatCommand;
+use LBChat\Command\Server\InvalidCommand;
+use LBChat\Command\Server\LoggedCommand;
 use LBChat\Command\Server\NotifyCommand;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
@@ -35,8 +37,8 @@ class ChatClient {
 		$command = Command\CommandFactory::construct($this, $this->server, $msg);
 
 		if ($command === null) {
-			//TODO: Send commands
-			$this->send("INVALID");
+			$command = new InvalidCommand($this->server);
+			$command->execute($this);
 		} else {
 			$command->execute();
 		}
@@ -47,8 +49,8 @@ class ChatClient {
 	}
 
 	public function onLogin() {
-		//TODO: Send commands
-		$this->send("LOGGED");
+		$command = new LoggedCommand($this->server);
+		$command->execute($this);
 		$this->server->sendAllUserlists();
 		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
 	}
