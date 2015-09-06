@@ -2,7 +2,6 @@
 
 namespace LBChat\Command\Chat;
 
-
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Command\Server\ChatCommand;
