@@ -3,16 +3,19 @@ namespace LBChat\Database;
 
 use LBChat\ChatClient;
 use LBChat\Command\Server\InfoCommand;
+use LBChat\Integration\IUserSupport;
 use LBChat\Integration\JoomlaUserSupport;
 use LBChat\Integration\LBUserSupport;
 use Ratchet\ConnectionInterface;
 
 class SQLChatClient extends ChatClient {
 	protected $databases;
+	protected $support;
 
-	public function __construct(SQLChatServer $server, ConnectionInterface $connection, array $databases) {
+	public function __construct(SQLChatServer $server, ConnectionInterface $connection, array $databases, IUserSupport $support) {
 		parent::__construct($server, $connection);
 		$this->databases = $databases;
+		$this->support = $support;
 	}
 
 	public function onLogin() {
@@ -46,27 +49,27 @@ class SQLChatClient extends ChatClient {
 	}
 
 	public function getId() {
-		return JoomlaUserSupport::getId($this->getUsername());
+		return $this->support->getId($this->getUsername());
 	}
 
 	public function getUsername() {
-		return LBUserSupport::getUsername(parent::getUsername());
+		return $this->support->getUsername(parent::getUsername());
 	}
 
 	public function getDisplayName() {
-		return JoomlaUserSupport::getDisplayName($this->getUsername());
+		return $this->support->getDisplayName($this->getUsername());
 	}
 
 	public function getAccess() {
-		return LBUserSupport::getAccess($this->getUsername());
+		return $this->support->getAccess($this->getUsername());
 	}
 
 	public function getColor() {
-		return JoomlaUserSupport::getColor($this->getUsername());
+		return $this->support->getColor($this->getUsername());
 	}
 
 	public function getTitles() {
-		return JoomlaUserSupport::getTitles($this->getUsername());
+		return $this->support->getTitles($this->getUsername());
 	}
 
 	/**

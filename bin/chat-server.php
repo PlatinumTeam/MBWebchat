@@ -25,12 +25,11 @@ $databases = array(
 );
 
 //Assign the user support classes their databases so we can access the site data
-JoomlaUserSupport::setDatabase($databases["joomla"]);
-LBUserSupport::setDatabase($databases["platinum"]);
+$support = new JoomlaUserSupport($databases["joomla"], new LBUserSupport($databases["platinum"]));
 LBServerSupport::setDatabase($databases["platinum"]);
 
 //The main chat server
-$chatServer = new SQLChatServer($databases);
+$chatServer = new SQLChatServer($databases, $support);
 
 //Start a listening server that accepts HTTP and WebSocket connections
 $server = IoServer::factory(

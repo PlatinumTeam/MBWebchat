@@ -1,7 +1,6 @@
 <?php
 namespace LBChat;
 use LBChat\Command\Chat\WhisperCommand;
-use LBChat\Command\Server\ChatCommand;
 use LBChat\Command\Server\InvalidCommand;
 use LBChat\Command\Server\LoggedCommand;
 use LBChat\Command\Server\NotifyCommand;

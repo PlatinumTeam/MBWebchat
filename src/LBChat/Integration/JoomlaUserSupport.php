@@ -17,39 +17,55 @@ $mainframe->initialise();
 jimport("joomla.user.authorization");
 jimport("joomla.user.authentication");
 
-abstract class JoomlaUserSupport {
+class JoomlaUserSupport implements IUserSupport {
 	/**
 	 * @var Database $database
 	 */
-	protected static $database;
+	protected $database;
 
-	public static function setDatabase(Database $database) {
-		self::$database = $database;
+	/**
+	 * @var IUserSupport $backup
+	 */
+	protected $backup;
+
+	public function __construct(Database $database, IUserSupport $backup = null) {
+		$this->database = $database;
+		$this->backup = $backup;
 	}
 
-	protected static function getUser($id) {
+	protected function getUser($id) {
 		return \JFactory::getUser($id);
 	}
 
-	public static function getId($username) {
+	public function getId($username) {
 		return \JUserHelper::getUserId($username);
 	}
 
-	public static function getDisplayName($username) {
+	public function getUsername($username) {
+		return $this->getUser($this->getId($username))->username;
+	}
+
+	public function getAccess($username) {
+		if ($this->backup !== null)
+			return $this->backup->getAccess($username);
+		return 0;
+	}
+
+	public function getDisplayName($username) {
 		return self::getUser(self::getId($username))->name;
 	}
 
-	public static function getColor($username) {
+	public function getColor($username) {
 		$id = self::getId($username);
-		$query = self::$database->prepare("SELECT `colorValue` FROM `bv2xj_users` WHERE `id` = :id");
+		$query = $this->database->prepare("SELECT `colorValue` FROM `bv2xj_users` WHERE `id` = :id");
 		$query->bindParam(":id", $id);
 		$query->execute();
 		return $query->fetchColumn(0);
 	}
 
-	public static function getTitles($username) {
+	public function getTitles($username) {
 		$id = self::getId($username);
-		$query = self::$database->prepare(
+		$query = $this->database->prepare(
 			"SELECT `title`, 'flair' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleFlair` FROM `bv2xj_users` WHERE `id` = :uid)
 				UNION
 			SELECT `title`, 'prefix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titlePrefix` FROM `bv2xj_users` WHERE `id` = :uid)
