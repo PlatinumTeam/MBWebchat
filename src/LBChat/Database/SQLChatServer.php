@@ -32,6 +32,15 @@ class SQLChatServer extends ChatServer {
 		$this->initDatabase();
 	}
 
+	public function start() {
+		parent::start();
+
+		//Keep-alive loop so we don't drop any connections
+		$this->scheduleLoop(60, function() {
+			$this->keepAlive();
+		});
+	}
+
 	/**
 	 * Adds a client to the internal client list. This is overridden so we can
 	 * create SQLChatClients instead of normal clients.
@@ -60,4 +69,14 @@ class SQLChatServer extends ChatServer {
 		return $this->databases[$name];
 	}
 
+	protected function keepAlive() {
+		foreach ($this->databases as $database) {
+			/* @var Database $database */
+			try {
+				$database->prepare("SELECT 'keep-alive'")->execute();
+			} catch (\PDOException $e) {
+
+			}
+		}
+	}
 }
