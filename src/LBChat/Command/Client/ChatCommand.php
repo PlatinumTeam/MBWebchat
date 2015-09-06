@@ -19,6 +19,10 @@ class ChatCommand extends Command implements IClientCommand {
 	}
 
 	public function execute() {
+		//Don't let muted clients send messages
+		if ($this->client->isMuted())
+			return;
+
 		$command = new Server\ChatCommand($this->server, $this->client, $this->recipient, $this->message);
 		$this->server->broadcastCommand($command);
 	}

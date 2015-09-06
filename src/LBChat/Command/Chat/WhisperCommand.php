@@ -20,7 +20,8 @@ class WhisperCommand extends Command implements IChatCommand {
 	}
 
 	public function execute() {
-		$chat = new ChatCommand($this->server, $this->client, $this->recipient, $this->message);
+		$message = "/whisper {$this->recipient->getUsername()} {$this->message}";
+		$chat = new ChatCommand($this->server, $this->client, $this->recipient, $message);
 		$chat->execute($this->recipient);
 	}
 
@@ -29,6 +30,7 @@ class WhisperCommand extends Command implements IChatCommand {
 		$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
 		if ($recipient === null)
 			return null;
-		return new WhisperCommand($client, $server, $recipient, "/whisper " . $rest);
+		$message = implode(" ", $words);
+		return new WhisperCommand($client, $server, $recipient, $message);
 	}
 }
