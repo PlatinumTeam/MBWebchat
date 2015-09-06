@@ -1,7 +1,9 @@
 <?php
 namespace LBChat;
+use LBChat\Command\Chat\WhisperCommand;
 use LBChat\Command\Server\ChatCommand;
 use LBChat\Command\Server\NotifyCommand;
+use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
 
 class ChatClient {
@@ -180,7 +182,7 @@ class ChatClient {
 	public function cancelMute() {
 		$this->muteTime = 0;
 		$this->muted = false;
-		$chat = new ChatCommand($this->server, $this, $this, "You have been unmuted.");
-		$chat->execute($this);
+		$chat = new WhisperCommand(ServerChatClient::getClient(), $this->server, $this, "You have been unmuted.");
+		$chat->execute();
 	}
 }
