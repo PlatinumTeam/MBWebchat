@@ -45,5 +45,8 @@ $server = IoServer::factory(
 //Give the server the scheduler so it can do callbacks
 $chatServer->setScheduler($server->loop);
 
+//Start up any timers
+$chatServer->start();
+
 //Run the server
 $server->run();
