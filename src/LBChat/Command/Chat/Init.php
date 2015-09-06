@@ -28,9 +28,10 @@ function _addCommand($name, $class = null) {
 //Add all the commands
 _addCommands(
 	array(
-		"PQ",
-		"Whisper",
-		"Send",
-		"Mute"
+		array("/pq",      "LBChat\\Command\\Chat\\PQCommand"),
+		array("!pq",      "LBChat\\Command\\Chat\\PQCommand"),
+		array("/whisper", "LBChat\\Command\\Chat\\WhisperCommand"),
+		array("/send",    "LBChat\\Command\\Chat\\SendCommand"),
+		array("/mute",    "LBChat\\Command\\Chat\\MuteCommand")
 	)
 );
