@@ -2,6 +2,7 @@
 namespace LBChat;
 use LBChat\Command\Server;
 use LBChat\Command\Server\IServerCommand;
+use LBChat\Misc\ServerChatClient;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use React\EventLoop\LoopInterface;
@@ -24,6 +25,10 @@ class ChatServer implements MessageComponentInterface {
 	public function __construct() {
 		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
+
+		ServerChatClient::create($this);
+		$this->connections->attach(ServerChatClient::getConnection(), ServerChatClient::getClient());
+		$this->clients->attach(ServerChatClient::getClient());
 	}
 
 	/**

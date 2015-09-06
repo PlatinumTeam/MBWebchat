@@ -12,6 +12,7 @@ class ChatClient {
 	private $access;
 	private $color;
 	private $titles;
+	private $visible;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
 		$this->server = $server;
@@ -20,6 +21,7 @@ class ChatClient {
 		$this->access = 0;
 		$this->color = "000000";
 		$this->titles = array("", "", "");
+		$this->visible = true;
 	}
 
 	public function interpretMessage($msg) {
@@ -116,6 +118,14 @@ class ChatClient {
 
 	public function setTitle($index, $title) {
 		$this->titles[$index] = $title;
+	}
+
+	public function getVisible() {
+		return $this->visible;
+	}
+
+	public function setVisible($visible) {
+		$this->visible = $visible;
 	}
 
 	public function login($type, $data) {

@@ -16,7 +16,9 @@ class UserlistCommand extends Command implements IServerCommand {
 	public function execute(ChatClient $client) {
 		$this->start($client);
 		foreach ($this->clients as $cl) {
-			$this->send($client, $cl);
+			/* @var ChatClient $cl */
+			if ($cl->getVisible())
+				$this->send($client, $cl);
 		}
 		$this->done($client);
 	}
