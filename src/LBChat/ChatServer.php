@@ -24,6 +24,13 @@ class ChatServer implements MessageComponentInterface {
 	public function __construct() {
 		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
+
+		$this->scheduleLoop(1, function() {
+			foreach ($this->connections as $conn) {
+				$client = $this->resolveClient($conn);
+				$client->onSecondAdvance();
+			}
+		});
 	}
 
 	/**
