@@ -16,11 +16,14 @@ class PlainConnection implements ConnectionInterface {
 	 */
 	protected $interface;
 
+	public $resourceId;
+
 	/**
 	 * @param ConnectionInterface $interface
 	 */
 	public function __construct(ConnectionInterface $interface) {
 		$this->interface = $interface;
+		$this->resourceId = "dup {$interface->resourceId}";
 	}
 
 	/**

@@ -75,6 +75,8 @@ class PlainServer implements MessageComponentInterface {
 	 * @throws \Exception
 	 */
 	function onMessage(ConnectionInterface $from, $msg) {
+		//Fix game clients sending \r\n instead of \n
+		$msg = str_replace("\r\n", "\n", $msg);
 		$this->component->onMessage($this->connectionMap[$from], $msg);
 	}
 }
