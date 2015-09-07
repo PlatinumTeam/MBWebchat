@@ -1,8 +1,8 @@
 <?php
 namespace LBChat;
 use LBChat\Command\Chat\WhisperCommand;
+use LBChat\Command\Server\IdentifyCommand;
 use LBChat\Command\Server\InvalidCommand;
-use LBChat\Command\Server\LoggedCommand;
 use LBChat\Command\Server\NotifyCommand;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
@@ -48,8 +48,6 @@ class ChatClient {
 	}
 
 	public function onLogin() {
-		$command = new LoggedCommand($this->server);
-		$command->execute($this);
 		$this->server->sendAllUserlists();
 		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
 	}
@@ -153,9 +151,14 @@ class ChatClient {
 
 		if ($status === false) {
 			//Login failed
+			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_INVAILD);
+			$command->execute($this);
 		} else {
 			//Login succeeded
 			$this->onLogin();
+
+			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_SUCCESS);
+			$command->execute($this);
 		}
 	}
 
