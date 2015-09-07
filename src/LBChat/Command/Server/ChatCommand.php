@@ -25,7 +25,7 @@ class ChatCommand extends Command implements IServerCommand {
 		$message = urlencode($this->message);
 
 		if ($this->to !== null)
-			$destination = String::encodeSpaces($this->to->getDisplayName());
+			$destination = String::encodeSpaces($this->to->getUsername());
 
 		//TODO: Invisible user chats to mods+ only
 		//TODO: Shadow banning
