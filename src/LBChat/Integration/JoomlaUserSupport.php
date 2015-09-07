@@ -18,6 +18,7 @@ jimport("joomla.user.authorization");
 jimport("joomla.user.authentication");
 
 class JoomlaUserSupport implements IUserSupport {
+	const cacheTime = 10;
 	/**
 	 * @var Database $database
 	 */
@@ -28,17 +29,43 @@ class JoomlaUserSupport implements IUserSupport {
 	 */
 	protected $backup;
 
+	protected $userCache;
+	protected $idCache;
+
 	public function __construct(Database $database, IUserSupport $backup = null) {
 		$this->database = $database;
 		$this->backup = $backup;
+		$this->userCache = array();
+		$this->idCache = array();
 	}
 
 	protected function getUser($id) {
-		return \JFactory::getUser($id);
+		//Cache the user results into an array because getUser takes forever
+		if (array_key_exists($id, $this->userCache)) {
+			$cached = $this->userCache[$id];
+			//Cache timeout is stored in $cached[1]
+			if (microtime(true) - $cached[1] > self::cacheTime) {
+				//Update the user
+				$user = \JFactory::getUser($id);
+				$this->userCache[$id] = array($user, microtime(true));
+			}
+		} else {
+			//Not cached yet- create a new one
+			$user = \JFactory::getUser($id);
+			$this->userCache[$id] = array($user, microtime(true));
+		}
+
+		//User object is stored in $cached[0]
+		return $this->userCache[$id][0];
 	}
 
 	public function getId($username) {
-		return \JUserHelper::getUserId($username);
+		//Cache ids for usernames. This doesn't need a timeout because these don't (ever) change.
+		// At least I hope so.
+		if (!array_key_exists($username, $this->idCache)) {
+			$this->idCache[$username] = \JUserHelper::getUserId($username);
+		}
+		return $this->idCache[$username];
 	}
 
 	public function getUsername($username) {
