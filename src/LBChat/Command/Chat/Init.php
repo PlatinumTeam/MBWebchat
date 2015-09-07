@@ -36,6 +36,7 @@ _addCommands(
 		array("/mute",    "LBChat\\Command\\Chat\\MuteCommand"),
 		array("/muteall", "LBChat\\Command\\Chat\\MuteAllCommand"),
 		array("/unmute",  "LBChat\\Command\\Chat\\UnmuteCommand"),
-		array("/stop",    "LBChat\\Command\\Chat\\StopCommand")
+		array("/stop",    "LBChat\\Command\\Chat\\StopCommand"),
+		array("/ping",    "LBChat\\Command\\Chat\\PingCommand")
 	)
 );
