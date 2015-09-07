@@ -9,7 +9,8 @@ class UserlistCommand extends Command implements IClientCommand {
 
 	public function execute() {
 		//Send the client the user list
-		$this->server->sendUserlist($this->client);
+		$command = new \LBChat\Command\Server\UserlistCommand($this->server, $this->server->getAllClients());
+		$command->execute($this->client);
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {

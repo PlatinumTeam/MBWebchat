@@ -195,6 +195,14 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	/**
+	 * Get all of the clients in the server
+	 * @return \SplObjectStorage
+	 */
+	public function getAllClients() {
+		return $this->clients;
+	}
+
+	/**
 	 * Schedule a callback to be evaluated after a specific amount of time
 	 * @param          $time
 	 * @param callable $callback
