@@ -31,7 +31,6 @@ class ChatCommand extends Command implements IServerCommand {
 		//TODO: Shadow banning
 
 		//Broadcast a chat message to everyone
-		//TODO: Send commands
 		$client->send("CHAT $username $display $destination $access $message");
 	}
 }
