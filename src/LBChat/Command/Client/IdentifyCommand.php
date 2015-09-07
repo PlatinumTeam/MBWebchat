@@ -19,6 +19,10 @@ class IdentifyCommand extends Command implements IClientCommand {
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
+		//Don't let clients identify twice
+		if ($client->getLoggedIn())
+			return null;
+
 		return new IdentifyCommand($server, $client, $rest);
 	}
 }

@@ -18,6 +18,13 @@ class KeyCommand extends Command implements IClientCommand {
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
+		//Don't let clients verify twice
+		if ($client->getLoggedIn())
+			return null;
+		//Don't let unidentified clients verify
+		if ($client->getUsername() === "")
+			return null;
+
 		return new KeyCommand($server, $client, $rest);
 	}
 }
