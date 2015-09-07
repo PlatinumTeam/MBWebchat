@@ -32,6 +32,8 @@ _addCommands(
 		array("!pq",      "LBChat\\Command\\Chat\\PQCommand"),
 		array("/whisper", "LBChat\\Command\\Chat\\WhisperCommand"),
 		array("/send",    "LBChat\\Command\\Chat\\SendCommand"),
-		array("/mute",    "LBChat\\Command\\Chat\\MuteCommand")
+		array("/mute",    "LBChat\\Command\\Chat\\MuteCommand"),
+		array("/muteall"  "LBChat\\Command\\Chat\\MuteAllCommand.php"),
+		array("/unmute",  "LBChat\\Command\\Chat\\UnmuteCommand.php")
 	)
 );
