@@ -12,6 +12,7 @@ namespace LBChat\Command\Chat;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Command\Server\ChatCommand;
+use LBChat\Misc\ServerChatClient;
 
 class MuteAllCommand extends Command implements IChatCommand {
     protected $time;
@@ -24,7 +25,7 @@ class MuteAllCommand extends Command implements IChatCommand {
     public function execute() {
         // Send a message saying that everyone has been muted.
         $message = "[col:1][b]" . $this->client->getDisplayName() . " has muted everyone.";
-        $chat = new ChatCommand($this->server, $this->client, null, $message);
+        $chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
         $this->server->broadcastCommand($chat);
 
         // get all the clients

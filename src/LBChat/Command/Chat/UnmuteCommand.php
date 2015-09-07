@@ -5,6 +5,7 @@ namespace LBChat\Command\Chat;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Command\Server\ChatCommand;
+use LBChat\Misc\ServerChatClient;
 use LBChat\Utils\String;
 
 class UnmuteCommand extends Command implements IChatCommand {
@@ -19,21 +20,22 @@ class UnmuteCommand extends Command implements IChatCommand {
     public function execute() {
         // You must specify who you are going to mute!
         if ($this->recipient == null) {
-            $chat = new ChatCommand($this->server, $this->client, $this->client, "Usage: /unmute <name>");
-            $chat->execute($this->client);
+            $chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client, "Usage: /unmute
+            <name>");
+            $chat->execute();
             return;
         }
 
         // If the person is already unmuted, why are you muting them.
         if (!$this->recipient->isMuted()) {
-            $chat = new ChatCommand($this->server, $this->client, $this->client, "Already unmuted.");
-            $chat->execute($this->client);
+            $chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client, "Already unmuted.");
+            $chat->execute();
             return;
         }
 
         // broadcast message so everyone knows.
         $message = "[col:1][b]" . $this->recipient->getDisplayName() . " has been unmuted by " . $this->client->getDisplayName() . ".";
-        $chat = new ChatCommand($this->server, $this->client, null, $message);
+        $chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
         $this->server->broadcastCommand($chat);        
 
         // Cancel the mute

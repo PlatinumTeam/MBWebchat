@@ -5,6 +5,7 @@ namespace LBChat\Command\Chat;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Command\Server\ChatCommand;
+use LBChat\Misc\ServerChatClient;
 use LBChat\Utils\String;
 
 class MuteCommand extends Command implements IChatCommand {
@@ -23,15 +24,15 @@ class MuteCommand extends Command implements IChatCommand {
 		// a mistake and did a negative, or you were trying to un-mute someone. I'll be nice about it
 		// and let the mod/admin know what to do.
 		if ($this->time < 0) {
-			$chat = new ChatCommand($this->server, $this->client, $this->client, "Cannot give a negative mute. Use /unmute <display name> to un-mute someone.");
-			$chat->execute($this->client);
+			$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client, "Cannot give a negative mute. Use /unmute <display name> to un-mute someone.");
+			$chat->execute();
 			return;
 		}
 
 		// If the person isn't muted yet, we will embarrass them by display they have been muted.
 		if (!$this->recipient->isMuted()) {
 			$message = "[col:1][b]" . $this->recipient->getDisplayName() . " has been muted by " . $this->client->getDisplayName() . ".";
-			$chat = new ChatCommand($this->server, $this->client, null, $message);
+			$chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
 			$this->server->broadcastCommand($chat);
 		}
 
