@@ -25,7 +25,7 @@ class UnmuteCommand extends Command implements IChatCommand {
         }
 
         // If the person is already unmuted, why are you muting them.
-        if ($this->recipient->isMuted()) {
+        if (!$this->recipient->isMuted()) {
             $chat = new ChatCommand($this->server, $this->client, $this->client, "Already unmuted.");
             $chat->execute($this->client);
             return;

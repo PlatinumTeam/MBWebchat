@@ -69,7 +69,7 @@ class ServerChatClient extends ChatClient {
 	}
 
 	public function getColor() {
-		return "#0000cc"; //Blue
+		return "0000cc"; //Blue
 	}
 
 	public function getTitles() {
