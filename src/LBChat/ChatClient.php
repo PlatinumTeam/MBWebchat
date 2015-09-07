@@ -19,10 +19,13 @@ class ChatClient {
 	private $muted;
 	private $muteTime;
 	private $visible;
+	protected $loggedIn;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
 		$this->server = $server;
 		$this->connection = $connection;
+		$this->username = "";
+		$this->display = "";
 		$this->location = 0;
 		$this->access = 0;
 		$this->color = "000000";
@@ -30,6 +33,7 @@ class ChatClient {
 		$this->muted = false;
 		$this->muteTime = 0;
 		$this->visible = true;
+		$this->loggedIn = false;
 	}
 
 	public function interpretMessage($msg) {
@@ -48,6 +52,8 @@ class ChatClient {
 	}
 
 	public function onLogin() {
+		$this->loggedIn = true;
+
 		$this->server->sendAllUserlists();
 		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
 	}
@@ -132,6 +138,14 @@ class ChatClient {
 
 	public function setVisible($visible) {
 		$this->visible = $visible;
+	}
+
+	public function getLoggedIn() {
+		return $this->loggedIn;
+	}
+
+	public function setLoggedIn($loggedIn) {
+		$this->loggedIn = $loggedIn;
 	}
 
 	public function login($type, $data) {
