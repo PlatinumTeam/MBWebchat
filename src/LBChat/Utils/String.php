@@ -32,4 +32,28 @@ abstract class String {
 		$str = str_replace("-NL-",  "\n", $str);
 		return $str;
 	}
+
+	/**
+	 * Split a string into word-separated arguments.
+	 * @param $str
+	 * @return array
+	 */
+	public static function getWordOptions($str) {
+		//PHP is a bitch: If the string is empty then explode() returns an invalid array
+		if (strlen($str) == 0)
+			return array();
+
+		//Try to split it by spaces
+		$words = explode(" ", $str);
+
+		//PHP is a bitch: If the string is empty then explode() returns false
+		if ($words === false) {
+			return array();
+		}
+
+		//Decode spaces in every word in the array
+		return array_map(function($word) {
+			return self::decodeSpaces($word);
+		}, $words);
+	}
 }

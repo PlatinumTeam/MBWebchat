@@ -41,10 +41,10 @@ class MuteCommand extends Command implements IChatCommand {
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
-		$words = explode(" ", $rest);
 		$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
 		if ($recipient === null)
 			return null;
 		return new MuteCommand($server, $client, $recipient, $words[0]);
+		$words = String::getWordOptions($rest);
 	}
 }
