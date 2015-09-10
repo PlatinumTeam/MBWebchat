@@ -16,20 +16,38 @@ abstract class ChatCommandFactory {
 		if (count($words) == 0)
 			return null;
 
-		$first = array_shift($words);
-		$rest = implode(" ", $words);
+		//Try to find a matching command
+		$lower = strtolower($msg);
 
-		$first = strtolower($first); //Case-insensitive comparison
-		if (array_key_exists((string)$first, self::$commandTypes)) {
-			$constructor = self::$commandTypes[$first];
-			return call_user_func($constructor, $server, $client, $rest, $msg);
-		} else {
-			return null;
+		foreach (self::$commandTypes as $name => $options) {
+			/* @var callable $constructor */
+			list($constructor, $caseSensitive) = $options;
+
+			//Some may be case-sensitive
+			$start = strpos(($caseSensitive ? $msg : $lower), $name);
+
+			//If the command was found at the start of the string
+			if ($start === 0) {
+				//Strip off the starting portion of the command
+				$rest = ltrim(substr($msg, strlen($name)));
+
+				//And try to call the constructor of the command type.
+				$result = call_user_func($constructor, $server, $client, $rest, $msg);
+
+				//If we don't succeed, keep trying commands until we do.
+				if ($result !== null)
+					return $result;
+			}
 		}
+		//No command worked
+		return null;
 	}
 
-	public static function addCommandType($name, $constructor) {
-		self::$commandTypes[strtolower($name)] = $constructor;
+	public static function addCommandType($name, callable $constructor, $caseSensitive = false) {
+		if (!$caseSensitive)
+			$name = strtolower($name);
+
+		self::$commandTypes[$name] = array($constructor, $caseSensitive);
 	}
 
 	public static function init() {
