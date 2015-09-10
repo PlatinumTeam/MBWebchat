@@ -3,6 +3,8 @@ namespace LBChat\Command\Chat;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Command\ChatCommandFactory;
+use LBChat\Command\Client\ChatCommand;
 use LBChat\Misc\ServerChatClient;
 
 class SendCommand extends Command implements IChatCommand {
@@ -14,7 +16,17 @@ class SendCommand extends Command implements IChatCommand {
 	}
 
 	public function execute() {
-		ServerChatClient::sendMessage(true, null, $this->message);
+		//Try to create a command from the server
+		$client = ServerChatClient::getClient();
+
+		//If we can find a chat command (/something) then we should use that instead of the default
+		// chat command behavior.
+		$command = ChatCommandFactory::construct($this->server, $client, $this->message);
+		if ($command === null) {
+			$command = new ChatCommand($this->server, $client, null, $this->message);
+		}
+
+		$command->execute();
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
