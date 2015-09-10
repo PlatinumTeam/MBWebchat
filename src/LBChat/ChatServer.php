@@ -143,6 +143,9 @@ class ChatServer implements MessageComponentInterface {
 		//Try to match by username first
 		foreach ($this->connections as $conn) {
 			$client = $this->resolveClient($conn);
+			//Don't let us perform stuff on hidden clients
+			if (!$client->getVisible())
+				continue;
 			if (strtolower($client->getUsername()) === $name) {
 				return $client;
 			}
@@ -150,6 +153,9 @@ class ChatServer implements MessageComponentInterface {
 		//If that fails, try by display name
 		foreach ($this->connections as $conn) {
 			$client = $this->resolveClient($conn);
+			//Don't let us perform stuff on hidden clients
+			if (!$client->getVisible())
+				continue;
 			if (strtolower($client->getDisplayName()) === $name) {
 				return $client;
 			}
