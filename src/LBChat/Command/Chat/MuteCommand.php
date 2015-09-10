@@ -16,7 +16,7 @@ class MuteCommand extends Command implements IChatCommand {
 		parent::__construct($server, $client);
 
 		$this->recipient = $recipient;
-		$this->time = $time;
+		$this->time      = $time;
 	}
 
 	public function execute() {
@@ -24,15 +24,18 @@ class MuteCommand extends Command implements IChatCommand {
 		// a mistake and did a negative, or you were trying to un-mute someone. I'll be nice about it
 		// and let the mod/admin know what to do.
 		if ($this->time < 0) {
-			$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client, "Cannot give a negative mute. Use /unmute <display name> to un-mute someone.");
+			$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client,
+				"Cannot give a negative mute. Use /unmute <display name> to un-mute someone.");
 			$chat->execute();
+
 			return;
 		}
 
 		// If the person isn't muted yet, we will embarrass them by display they have been muted.
 		if (!$this->recipient->isMuted()) {
-			$message = "[col:1][b]" . $this->recipient->getDisplayName() . " has been muted by " . $this->client->getDisplayName() . ".";
-			$chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
+			$message = "[col:1][b]" . $this->recipient->getDisplayName() . " has been muted by " .
+			           $this->client->getDisplayName() . ".";
+			$chat    = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
 			$this->server->broadcastCommand($chat);
 		}
 
@@ -41,10 +44,44 @@ class MuteCommand extends Command implements IChatCommand {
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
-		$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
-		if ($recipient === null)
-			return null;
-		return new MuteCommand($server, $client, $recipient, $words[0]);
 		$words = String::getWordOptions($rest);
+
+		switch (count($words)) {
+		case 0:
+			//Check your own mute
+			$message = self::formatInfoMessage($client, true);
+			return new WhisperCommand($server, ServerChatClient::getClient(), $client, $message);
+		case 1:
+			//Check someone's mute time
+			$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
+			if ($recipient === null) {
+				//TODO: Error messages
+				return null;
+			}
+			$message = self::formatInfoMessage($recipient, false);
+			return new WhisperCommand($server, ServerChatClient::getClient(), $client, $message);
+		case 2:
+			//Mute someone for a time
+			$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
+			$time = (int)array_shift($words);
+			if ($recipient === null) {
+				//TODO: Error messages
+				return null;
+			}
+
+			return new MuteCommand($server, $client, $recipient, $time);
+		}
+		return null;
+	}
+
+	protected static function formatInfoMessage(ChatClient $client, $self) {
+		$message = "";
+		if ($self) $message .= "You are ";
+		else       $message .= $client->getDisplayName() . " is ";
+
+		if ($client->isMuted()) $message .= "muted for " . $client->getMuteTime() . " seconds.";
+		else                    $message .= "unmuted.";
+
+		return $message;
 	}
 }

@@ -192,6 +192,10 @@ class ChatClient {
 		return $this->muted;
 	}
 
+	public function getMuteTime() {
+		return $this->muteTime;
+	}
+
 	public function addMuteTime($time) {
 		$this->muteTime += $time;
 		$this->muted = true;
