@@ -8,7 +8,10 @@ use LBChat\Command\Chat\IChatCommand;
 abstract class ChatCommandFactory {
 	static $commandTypes = array();
 	/**
-	 * Construct a client command object from a given message, that can be executed.
+	 * Construct a chat command object from a given message, that can be executed.
+	 * @param ChatServer $server
+	 * @param ChatClient $client
+	 * @param string $msg
 	 * @return IChatCommand
 	 */
 	public static function construct(ChatServer $server, ChatClient $client, $msg) {
@@ -43,6 +46,12 @@ abstract class ChatCommandFactory {
 		return null;
 	}
 
+	/**
+	 * Add a command to the factory's list of acceptable commands.
+	 * @param string   $name          The name of the command for which messages will be tested
+	 * @param callable $constructor   A constructor for creating a command object
+	 * @param boolean  $caseSensitive If the command should be considered case-sensitive
+	 */
 	public static function addCommandType($name, callable $constructor, $caseSensitive = false) {
 		if (!$caseSensitive)
 			$name = strtolower($name);
@@ -50,6 +59,9 @@ abstract class ChatCommandFactory {
 		self::$commandTypes[$name] = array($constructor, $caseSensitive);
 	}
 
+	/**
+	 * Initialize the command backend, loading all known commands from Init.php
+	 */
 	public static function init() {
 		require "Chat/Init.php";
 	}
