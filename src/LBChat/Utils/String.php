@@ -10,8 +10,8 @@ abstract class String {
 	/**
 	 * Encodes names and other values, swapping spaces with -SPC- . Use this whenever
 	 * you need to send space-delimited commands to a client.
-	 * @param $str
-	 * @return mixed
+	 * @param string $str
+	 * @return string
 	 */
 	public static function encodeSpaces($str) {
 		$str = str_replace(" ",  "-SPC-", $str);
@@ -23,8 +23,8 @@ abstract class String {
 	/**
 	 * Decodes names and other values, swapping -SPC- with spaces. Use this whenever
 	 * receiving space-delimited commands from a client.
-	 * @param $str
-	 * @return mixed
+	 * @param string $str
+	 * @return string
 	 */
 	public static function decodeSpaces($str) {
 		$str = str_replace("-SPC-", " ",  $str);
@@ -35,7 +35,7 @@ abstract class String {
 
 	/**
 	 * Split a string into word-separated arguments.
-	 * @param $str
+	 * @param string $str
 	 * @return array
 	 */
 	public static function getWordOptions($str) {

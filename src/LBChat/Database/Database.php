@@ -1,6 +1,11 @@
 <?php
 namespace LBChat\Database;
 
+/**
+ * A simple database access wrapper class using the MBDB database system.
+ * Class Database
+ * @package LBChat\Database
+ */
 class Database {
 	/**
 	 * @var \PDO $connection
@@ -20,6 +25,11 @@ class Database {
 		}
 	}
 
+	/**
+	 * Create a prepared statement using the database.
+	 * @param string $query The query to prepare
+	 * @return \PDOStatement
+	 */
 	public function prepare($query) {
 		return $this->connection->prepare($query);
 	}
