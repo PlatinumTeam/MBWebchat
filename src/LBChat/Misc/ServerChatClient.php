@@ -6,6 +6,12 @@ use LBChat\ChatServer;
 use LBChat\Command\Server\ChatCommand;
 use Ratchet\ConnectionInterface;
 
+/**
+ * A simple subclass of the basic client used for SERVER messages.
+ * You should not make any real clients with this class.
+ * Class ServerChatClient
+ * @package LBChat\Misc
+ */
 class ServerChatClient extends ChatClient {
 
 	/**
@@ -17,23 +23,47 @@ class ServerChatClient extends ChatClient {
 	 */
 	protected static $dummy;
 
+	/**
+	 * Create the server client singleton
+	 * @param ChatServer $server
+	 */
 	public static function create(ChatServer $server) {
 		self::$dummy = new DummyConnection();
 		self::$client = new ServerChatClient($server, self::$dummy);
 	}
 
+	/**
+	 * Get the global ServerChatClient object
+	 * @return ServerChatClient
+	 */
 	public static function getClient() {
 		return self::$client;
 	}
 
+	/**
+	 * Get the connection behind the global ServerChatClient object
+	 * @return ConnectionInterface
+	 */
 	public static function getConnection() {
 		return self::$dummy;
 	}
 
+	/**
+	 * Send a chat message as if it came from the global server chat
+	 * @param boolean    $global    If the message should be broadcast globally
+	 * @param ChatClient $recipient The client to whom the message will be sent
+	 * @param string     $message   The message itself
+	 */
 	public static function sendMessage($global, ChatClient $recipient = null, $message) {
 		self::getClient()->chat($global, $recipient, $message);
 	}
 
+	/**
+	 * Send a chat message as if it came from the global server chat
+	 * @param boolean    $global    If the message should be broadcast globally
+	 * @param ChatClient $recipient The client to whom the message will be sent
+	 * @param string     $message   The message itself
+	 */
 	public function chat($global, ChatClient $recipient = null, $message) {
 		$command = new ChatCommand($this->server, $this, $recipient, $message);
 
