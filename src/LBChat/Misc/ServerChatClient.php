@@ -77,6 +77,20 @@ class ServerChatClient extends ChatClient {
 	}
 
 	public function getVisible() {
+		//Don't have them be on the list or accessible
 		return false;
+	}
+
+	public function isMuted() {
+		//Can't mute the server
+		return false;
+	}
+
+	public function addMuteTime($time) {
+		//Can't mute the server
+	}
+
+	public function cancelMute() {
+		//Can't mute the server
 	}
 }
