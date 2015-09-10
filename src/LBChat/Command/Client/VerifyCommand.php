@@ -32,9 +32,9 @@ class VerifyCommand extends Command implements IClientCommand {
 		if ($client->getUsername() === "")
 			return null;
 
-		$words = explode(" ", $rest);
-		$version  = (int)(String::decodeSpaces(array_shift($words)));
-		$password =       String::decodeSpaces(array_shift($words));
+		$words = String::getWordOptions($rest);
+		$version  = (int)(array_shift($words));
+		$password =       array_shift($words);
 		return new VerifyCommand($server, $client, $version, $password);
 	}
 }
