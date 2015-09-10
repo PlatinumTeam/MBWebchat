@@ -21,8 +21,8 @@ class ChatCommand extends Command implements IServerCommand {
 		$username    = String::encodeSpaces($this->from->getUsername());
 		$display     = String::encodeSpaces($this->from->getDisplayName());
 		$destination = "";
-		$access = $this->from->getAccess();
-		$message = urlencode($this->message);
+		$access      = $this->from->getAccess();
+		$message     = urlencode($this->message);
 
 		if ($this->to !== null)
 			$destination = String::encodeSpaces($this->to->getUsername());

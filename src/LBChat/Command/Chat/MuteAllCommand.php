@@ -13,6 +13,7 @@ use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Command\Server\ChatCommand;
 use LBChat\Misc\ServerChatClient;
+use LBChat\Utils\String;
 
 class MuteAllCommand extends Command implements IChatCommand {
     protected $time;
@@ -43,6 +44,12 @@ class MuteAllCommand extends Command implements IChatCommand {
     }
 
     public static function init(ChatServer $server, ChatClient $client, $rest) {
-        return new MuteAllCommand($server, $client, $rest);
+        $words = String::getWordOptions($rest);
+	    if (count($words) != 1) {
+		    return InvalidCommand::createUsage($server, $client, "/muteall <time>");
+	    }
+
+	    $time = (int)array_shift($words);
+        return new MuteAllCommand($server, $client, $time);
     }
 }

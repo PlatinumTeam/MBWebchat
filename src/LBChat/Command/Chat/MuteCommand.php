@@ -53,25 +53,35 @@ class MuteCommand extends Command implements IChatCommand {
 			return new WhisperCommand($server, ServerChatClient::getClient(), $client, $message);
 		case 1:
 			//Check someone's mute time
-			$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
+			$user = array_shift($words);
+			$recipient = $server->findClient($user);
+			//Could not find them?
 			if ($recipient === null) {
-				//TODO: Error messages
-				return null;
+				return InvalidCommand::createUnknownUser($server, $client, $user);
 			}
 			$message = self::formatInfoMessage($recipient, false);
 			return new WhisperCommand($server, ServerChatClient::getClient(), $client, $message);
 		case 2:
 			//Mute someone for a time
-			$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
-			$time = (int)array_shift($words);
-			if ($recipient === null) {
-				//TODO: Error messages
-				return null;
+			$user = array_shift($words);
+
+			//Special case: use /muteall
+			if ($user === "all") {
+				$rest = substr($rest, 3); //strlen("all")
+				return MuteAllCommand::init($server, $client, ltrim($rest));
 			}
+
+			$recipient = $server->findClient($user);
+			//Could not find them?
+			if ($recipient === null) {
+				return InvalidCommand::createUnknownUser($server, $client, $user);
+			}
+
+			$time = (int)array_shift($words);
 
 			return new MuteCommand($server, $client, $recipient, $time);
 		}
-		return null;
+		return InvalidCommand::createUsage($server, $client, "/mute [, user [, time]]");
 	}
 
 	protected static function formatInfoMessage(ChatClient $client, $self) {

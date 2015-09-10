@@ -18,21 +18,6 @@ class UnmuteCommand extends Command implements IChatCommand {
     }
 
     public function execute() {
-        // You must specify who you are going to mute!
-        if ($this->recipient == null) {
-            $chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client, "Usage: /unmute
-            <name>");
-            $chat->execute();
-            return;
-        }
-
-        // If the person is already unmuted, why are you muting them.
-        if (!$this->recipient->isMuted()) {
-            $chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client, "Already unmuted.");
-            $chat->execute();
-            return;
-        }
-
         // broadcast message so everyone knows.
         $message = "[col:1][b]" . $this->recipient->getDisplayName() . " has been unmuted by " . $this->client->getDisplayName() . ".";
         $chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
@@ -43,10 +28,25 @@ class UnmuteCommand extends Command implements IChatCommand {
     }
 
     public static function init(ChatServer $server, ChatClient $client, $rest) {
-        $words = explode(" ", $rest);
-        $recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
-        if ($recipient === null)
-            return null;
+        $words = String::getWordOptions($rest);
+
+	    //Correct usage is like this
+	    if (count($words) != 1) {
+		    return InvalidCommand::createUsage($server, $client, "/unmute <user>");
+	    }
+
+        $user = array_shift($words);
+        $recipient = $server->findClient($user);
+
+	    //Couldn't find them
+        if ($recipient === null) {
+            return InvalidCommand::createUnknownUser($server, $client, $user);
+        }
+	    // If the person is already unmuted, why are you muting them.
+	    if ($recipient->isMuted()) {
+		    return InvalidCommand::createGeneric($server, $client, "User is not muted.");
+	    }
+
         return new UnmuteCommand($server, $client, $recipient);
     }
 }

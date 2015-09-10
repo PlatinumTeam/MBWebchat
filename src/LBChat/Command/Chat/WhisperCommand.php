@@ -26,10 +26,16 @@ class WhisperCommand extends Command implements IChatCommand {
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
-		$words = explode(" ", $rest);
-		$recipient = $server->findClient(String::decodeSpaces(array_shift($words)));
-		if ($recipient === null)
-			return null;
+		$words = String::getWordOptions($rest);
+		if (count($words) < 2) {
+			return InvalidCommand::createUsage($server, $client, "/whisper <player> <message>");
+		}
+
+		$user = array_shift($words);
+		$recipient = $server->findClient($user);
+		if ($recipient === null) {
+			return InvalidCommand::createUnknownUser($server, $client, $user);
+		}
 		$message = implode(" ", $words);
 		return new WhisperCommand($server, $client, $recipient, $message);
 	}
