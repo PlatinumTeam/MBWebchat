@@ -17,7 +17,7 @@ abstract class CommandFactory {
 	 */
 	public static function construct(ChatServer $server, ChatClient $client, $msg) {
 		$words = explode(" ", $msg);
-		if (count($words) == 0)
+		if ($msg === "" || count($words) == 0)
 			return null;
 
 		$first = array_shift($words);
