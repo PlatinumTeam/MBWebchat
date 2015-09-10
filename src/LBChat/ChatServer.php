@@ -138,17 +138,19 @@ class ChatServer implements MessageComponentInterface {
 	 * @return ChatClient
 	 */
 	public function findClient($name) {
+		$name = strtolower($name);
+
 		//Try to match by username first
 		foreach ($this->connections as $conn) {
 			$client = $this->resolveClient($conn);
-			if ($client->getUsername() === $name) {
+			if (strtolower($client->getUsername()) === $name) {
 				return $client;
 			}
 		}
 		//If that fails, try by display name
 		foreach ($this->connections as $conn) {
 			$client = $this->resolveClient($conn);
-			if ($client->getDisplayName() === $name) {
+			if (strtolower($client->getDisplayName()) === $name) {
 				return $client;
 			}
 		}
