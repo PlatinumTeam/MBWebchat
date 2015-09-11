@@ -2,6 +2,7 @@
 namespace LBChat;
 use LBChat\Command\Server;
 use LBChat\Command\Server\IServerCommand;
+use LBChat\Group\ChatGroup;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
@@ -22,6 +23,9 @@ class ChatServer implements MessageComponentInterface {
 	 */
 	protected $scheduler;
 
+	protected $groups;
+	protected $globalGroup;
+
 	public function __construct() {
 		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
@@ -29,6 +33,11 @@ class ChatServer implements MessageComponentInterface {
 		ServerChatClient::create($this);
 		$this->connections->attach(ServerChatClient::getConnection(), ServerChatClient::getClient());
 		$this->clients->attach(ServerChatClient::getClient());
+
+		$this->groups = new \SplObjectStorage();
+		$this->globalGroup = $this->addGroup("global");
+
+		$this->addGroup("test");
 	}
 
 	/**
@@ -101,12 +110,16 @@ class ChatServer implements MessageComponentInterface {
 		$conn->close();
 	}
 
+	protected function createClient(ConnectionInterface $conn) {
+		return new ChatClient($this, $conn);
+	}
+
 	/**
 	 * When a client connects, this method adds them to the internal clients list
 	 * @param ConnectionInterface $conn
 	 */
 	protected function addClient(ConnectionInterface $conn) {
-		$client = new ChatClient($this, $conn);
+		$client = $this->createClient($conn);
 		$this->connections->attach($conn, $client);
 		$this->clients->attach($client);
 	}
@@ -228,5 +241,45 @@ class ChatServer implements MessageComponentInterface {
 	 */
 	public function scheduleLoop($interval, callable $callback) {
 		return $this->scheduler->addPeriodicTimer($interval, $callback);
+	}
+
+	public function getGlobalGroup() {
+		return $this->getGroup("global");
+	}
+
+	public function getGroup($name) {
+		foreach ($this->groups as $group) {
+			/* @var ChatGroup $group */
+			if ($group->getName() === $name)
+				return $group;
+		}
+		return null;
+	}
+
+	public function addGroup($name) {
+		//Don't have two groups with the same name
+		if ($this->getGroup($name) !== null) {
+			return;
+		}
+
+		$group = new ChatGroup($this, $name);
+		$this->groups->attach($group);
+
+		return $group;
+	}
+
+	public function removeGroup($name) {
+		$group = $this->getGroup($name);
+		//No group, can't remove it
+		if ($group === null) {
+			return;
+		}
+
+		//Remove all clients
+		foreach ($group->getAllClients() as $client) {
+			$group->removeClient($client);
+		}
+
+		$this->groups->detach($group);
 	}
 }

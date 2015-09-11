@@ -1,9 +1,12 @@
 <?php
 namespace LBChat;
 use LBChat\Command\Chat\WhisperCommand;
+use LBChat\Command\CommandFactory;
 use LBChat\Command\Server\IdentifyCommand;
 use LBChat\Command\Server\InvalidCommand;
+use LBChat\Command\Server\IServerCommand;
 use LBChat\Command\Server\NotifyCommand;
+use LBChat\Group\ChatGroup;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
 
@@ -25,6 +28,7 @@ class ChatClient {
 	private $muteTime;
 	private $visible;
 	protected $loggedIn;
+	protected $groups;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
 		$this->server = $server;
@@ -39,6 +43,7 @@ class ChatClient {
 		$this->muteTime = 0;
 		$this->visible = true;
 		$this->loggedIn = false;
+		$this->groups = new \SplObjectStorage();
 	}
 
 	/**
@@ -46,7 +51,7 @@ class ChatClient {
 	 * @param string $msg The message
 	 */
 	public function interpretMessage($msg) {
-		$command = Command\CommandFactory::construct($this->server, $this, $msg);
+		$command = CommandFactory::construct($this->server, $this, $msg);
 
 		if ($command === null) {
 			$command = new InvalidCommand($this->server);
@@ -72,6 +77,9 @@ class ChatClient {
 
 		$this->server->sendAllUserlists();
 		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
+
+		//Join the global group
+		$this->server->getGlobalGroup()->addClient($this);
 	}
 
 	/**
@@ -323,5 +331,26 @@ class ChatClient {
 		$this->muted = false;
 		$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this, "You have been unmuted.");
 		$chat->execute();
+	}
+
+	public function broadcastCommand(IServerCommand $command) {
+		echo("Client {$this->getUsername()} broadcasting to all groups.\n");
+		print_r(array_map(function($group) {
+			/* @var ChatGroup $group */
+			return $group->getName();
+		}, iterator_to_array($this->groups)));
+
+		foreach ($this->groups as $group) {
+			/* @var ChatGroup $group */
+			$group->broadcastCommand($command);
+		}
+	}
+
+	public function joinGroup(ChatGroup $group) {
+		$this->groups->attach($group);
+	}
+
+	public function leaveGroup(ChatGroup $group) {
+		$this->groups->detach($group);
 	}
 }
