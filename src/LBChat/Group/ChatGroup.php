@@ -25,6 +25,9 @@ class ChatGroup {
 		$this->server = $server;
 		$this->name = $name;
 		$this->clients = new \SplObjectStorage();
+
+		//Always have the server chat in the group
+		$this->addClient(ServerChatClient::getClient());
 	}
 
 	public function getName() {
@@ -36,10 +39,11 @@ class ChatGroup {
 	}
 
 	public function addClient(ChatClient $client) {
+		//Let the group know that someone is joining
+		$command = new GroupCommand($this->server, GroupCommand::ACTION_LOGIN, $client);
+		$this->broadcastCommand($command);
+
 		$this->clients->attach($client);
-
-		echo("New client in the group: {$client->getUsername()}\n");
-
 		$client->joinGroup($this);
 
 		$command = new GroupCommand($this->server, GroupCommand::ACTION_JOIN, $this);
@@ -47,14 +51,15 @@ class ChatGroup {
 	}
 
 	public function removeClient(ChatClient $client) {
-		$this->clients->detach($client);
-
-		echo("Client leave: {$client->getUsername()}\n");
-
-		$client->leaveGroup($this);
-
 		$command = new GroupCommand($this->server, GroupCommand::ACTION_LEAVE, $this);
 		$command->execute($client);
+
+		$this->clients->detach($client);
+		$client->leaveGroup($this);
+
+		//Let the group know that they left
+		$command = new GroupCommand($this->server, GroupCommand::ACTION_LOGOUT, $client);
+		$this->broadcastCommand($command);
 	}
 
 	public function broadcast($message, ChatClient $exclude = null) {

@@ -4,11 +4,15 @@ namespace LBChat\Command\Server;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Group\ChatGroup;
+use LBChat\Utils\String;
 
 class GroupCommand extends Command implements IServerCommand {
 
 	const ACTION_JOIN = "join";
 	const ACTION_LEAVE = "leave";
+
+	const ACTION_LOGIN = "login";
+	const ACTION_LOGOUT = "logout";
 
 	protected $action;
 	protected $data;
@@ -31,16 +35,28 @@ class GroupCommand extends Command implements IServerCommand {
 		case self::ACTION_JOIN:
 			/* @var ChatGroup $group */
 			$group = $this->data;
-
-			echo("Joining client {$client->getUsername()} to group {$group->getName()}\n");
-			$client->send("GROUP JOIN {$group->getName()}");
+			$name = String::encodeSpaces($group->getName());
+			$client->send("GROUP JOIN $name");
 			break;
 		case self::ACTION_LEAVE:
 			/* @var ChatGroup $group */
 			$group = $this->data;
-
-			echo("Leaving client {$client->getUsername()} to group {$group->getName()}\n");
-			$client->send("GROUP LEAVE {$group->getName()}");
+			$name = String::encodeSpaces($group->getName());
+			$client->send("GROUP LEAVE $name");
+			break;
+		case self::ACTION_LOGIN:
+			/* @var ChatClient $user */
+			$user = $this->data;
+			$name = String::encodeSpaces($user->getUsername());
+			$display = String::encodeSpaces($user->getDisplayName());
+			$client->send("GROUP LOGIN $name $display");
+			break;
+		case self::ACTION_LOGOUT:
+			/* @var ChatClient $user */
+			$user = $this->data;
+			$name = String::encodeSpaces($user->getUsername());
+			$display = String::encodeSpaces($user->getDisplayName());
+			$client->send("GROUP LOGOUT $name $display");
 			break;
 		}
 	}

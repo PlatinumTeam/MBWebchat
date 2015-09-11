@@ -334,12 +334,6 @@ class ChatClient {
 	}
 
 	public function broadcastCommand(IServerCommand $command) {
-		echo("Client {$this->getUsername()} broadcasting to all groups.\n");
-		print_r(array_map(function($group) {
-			/* @var ChatGroup $group */
-			return $group->getName();
-		}, iterator_to_array($this->groups)));
-
 		foreach ($this->groups as $group) {
 			/* @var ChatGroup $group */
 			$group->broadcastCommand($command);
