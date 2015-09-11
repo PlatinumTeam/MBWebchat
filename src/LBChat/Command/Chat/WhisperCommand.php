@@ -21,7 +21,7 @@ class WhisperCommand extends Command implements IChatCommand {
 
 	public function execute() {
 		$message = "/whisper {$this->recipient->getUsername()} {$this->message}";
-		$chat = new ChatCommand($this->server, $this->client, $this->recipient, $message);
+		$chat = new ChatCommand($this->server, $this->client, $this->recipient, $this->server->getGlobalGroup(), $message);
 		$chat->execute($this->recipient);
 	}
 

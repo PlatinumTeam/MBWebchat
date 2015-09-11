@@ -20,7 +20,7 @@ class UnmuteCommand extends Command implements IChatCommand {
     public function execute() {
         // broadcast message so everyone knows.
         $message = "[col:1][b]" . $this->recipient->getDisplayName() . " has been unmuted by " . $this->client->getDisplayName() . ".";
-        $chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
+        $chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $this->server->getGlobalGroup(), $message);
         $this->server->broadcastCommand($chat);        
 
         // Cancel the mute

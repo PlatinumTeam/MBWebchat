@@ -35,7 +35,7 @@ class MuteCommand extends Command implements IChatCommand {
 		if (!$this->recipient->isMuted()) {
 			$message = "[col:1][b]" . $this->recipient->getDisplayName() . " has been muted by " .
 			           $this->client->getDisplayName() . ".";
-			$chat    = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
+			$chat    = new ChatCommand($this->server, ServerChatClient::getClient(), null, $this->server->getGlobalGroup(), $message);
 			$this->server->broadcastCommand($chat);
 		}
 

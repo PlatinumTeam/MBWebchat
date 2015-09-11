@@ -23,7 +23,7 @@ class SendCommand extends Command implements IChatCommand {
 		// chat command behavior.
 		$command = ChatCommandFactory::construct($this->server, $client, $this->message);
 		if ($command === null) {
-			$command = new ChatCommand($this->server, $client, null, $this->message);
+			$command = new ChatCommand($this->server, $client, null, $this->server->getGlobalGroup(), $this->message);
 		}
 
 		$command->execute();

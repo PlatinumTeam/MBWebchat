@@ -3,17 +3,21 @@ namespace LBChat\Command\Server;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Group\ChatGroup;
 use LBChat\Utils\String;
 
 class ChatCommand extends Command implements IServerCommand {
 	protected $from;
 	protected $to;
+	protected $group;
 	protected $message;
 
-	public function __construct(ChatServer $server, ChatClient $from, ChatClient $to = null, $message) {
+	public function __construct(ChatServer $server, ChatClient $from, ChatClient $to = null, ChatGroup $group,
+$message) {
 		parent::__construct($server);
 		$this->from = $from;
 		$this->to = $to;
+		$this->group = $group;
 		$this->message = $message;
 	}
 
@@ -22,6 +26,7 @@ class ChatCommand extends Command implements IServerCommand {
 		$display     = String::encodeSpaces($this->from->getDisplayName());
 		$destination = "";
 		$access      = $this->from->getAccess();
+		$group       = String::encodeSpaces($this->group->getName());
 		$message     = urlencode($this->message);
 
 		if ($this->to !== null)
@@ -31,6 +36,6 @@ class ChatCommand extends Command implements IServerCommand {
 		//TODO: Shadow banning
 
 		//Broadcast a chat message to everyone
-		$client->send("CHAT $username $display $destination $access $message");
+		$client->send("CHAT $username $display $destination $access $group $message");
 	}
 }

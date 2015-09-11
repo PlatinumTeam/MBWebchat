@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Jeff Hutchinson
- * Date: 9/6/2015
- * Time: 8:29 PM
- */
-
 namespace LBChat\Command\Chat;
 
 
@@ -26,7 +19,8 @@ class MuteAllCommand extends Command implements IChatCommand {
     public function execute() {
         // Send a message saying that everyone has been muted.
         $message = "[col:1][b]" . $this->client->getDisplayName() . " has muted everyone.";
-        $chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
+        $chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $this->server->getGlobalGroup(),
+        $message);
         $this->server->broadcastCommand($chat);
 
         // get all the clients

@@ -4,6 +4,7 @@ namespace LBChat\Misc;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Command\Server\ChatCommand;
+use LBChat\Group\ChatGroup;
 use Ratchet\ConnectionInterface;
 
 /**
@@ -52,20 +53,22 @@ class ServerChatClient extends ChatClient {
 	 * Send a chat message as if it came from the global server chat
 	 * @param boolean    $global    If the message should be broadcast globally
 	 * @param ChatClient $recipient The client to whom the message will be sent
+	 * @param ChatGroup  $group     The group in which to send the message
 	 * @param string     $message   The message itself
 	 */
-	public static function sendMessage($global, ChatClient $recipient = null, $message) {
-		self::getClient()->chat($global, $recipient, $message);
+	public static function sendMessage($global, ChatClient $recipient = null, ChatGroup $group, $message) {
+		self::getClient()->chat($global, $recipient, $group, $message);
 	}
 
 	/**
 	 * Send a chat message as if it came from the global server chat
 	 * @param boolean    $global    If the message should be broadcast globally
 	 * @param ChatClient $recipient The client to whom the message will be sent
+	 * @param ChatGroup  $group     The group in which to send the message
 	 * @param string     $message   The message itself
 	 */
-	public function chat($global, ChatClient $recipient = null, $message) {
-		$command = new ChatCommand($this->server, $this, $recipient, $message);
+	public function chat($global, ChatClient $recipient = null, ChatGroup $group, $message) {
+		$command = new ChatCommand($this->server, $this, $recipient, $group, $message);
 
 		if ($global || $recipient === null) {
 			$this->server->broadcastCommand($command, $this);

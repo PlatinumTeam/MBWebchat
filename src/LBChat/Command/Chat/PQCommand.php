@@ -8,7 +8,7 @@ use LBChat\Misc\ServerChatClient;
 
 class PQCommand extends Command implements IChatCommand {
 	public function execute() {
-		$chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, "PQ WHERe?");
+		$chat = new ChatCommand($this->server, ServerChatClient::getClient(), null, $this->server->getGlobalGroup(), "PQ WHERe?");
 		$this->server->broadcastCommand($chat);
 	}
 
