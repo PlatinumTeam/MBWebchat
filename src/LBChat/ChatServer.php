@@ -259,7 +259,7 @@ class ChatServer implements MessageComponentInterface {
 	public function addGroup($name) {
 		//Don't have two groups with the same name
 		if ($this->getGroup($name) !== null) {
-			return;
+			return null;
 		}
 
 		$group = new ChatGroup($this, $name);
