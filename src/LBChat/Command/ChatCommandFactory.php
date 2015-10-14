@@ -21,9 +21,16 @@ abstract class ChatCommandFactory {
 		//Try to find a matching command
 		$lower = strtolower($msg);
 
+		//Store this because it may be slow
+		$access = $client->getAccess();
+
 		foreach (self::$commandTypes as $name => $options) {
 			/* @var callable $constructor */
-			list($constructor, $caseSensitive) = $options;
+			list($constructor, $requiredAccess, $caseSensitive) = $options;
+
+			//Don't let clients use commands that they're not authorized to use
+			if ($access < $requiredAccess)
+				continue;
 
 			//Some may be case-sensitive
 			$start = strpos(($caseSensitive ? $msg : $lower), $name);
@@ -47,15 +54,16 @@ abstract class ChatCommandFactory {
 
 	/**
 	 * Add a command to the factory's list of acceptable commands.
-	 * @param string   $name          The name of the command for which messages will be tested
-	 * @param callable $constructor   A constructor for creating a command object
-	 * @param boolean  $caseSensitive If the command should be considered case-sensitive
+	 * @param string   $name           The name of the command for which messages will be tested
+	 * @param callable $constructor    A constructor for creating a command object
+	 * @param int      $requiredAccess The required access level to use the command
+	 * @param boolean  $caseSensitive  If the command should be considered case-sensitive
 	 */
-	public static function addCommandType($name, callable $constructor, $caseSensitive = false) {
+	public static function addCommandType($name, callable $constructor, $requiredAccess, $caseSensitive = false) {
 		if (!$caseSensitive)
 			$name = strtolower($name);
 
-		self::$commandTypes[$name] = array($constructor, $caseSensitive);
+		self::$commandTypes[$name] = array($constructor, $requiredAccess, $caseSensitive);
 	}
 
 	/**
