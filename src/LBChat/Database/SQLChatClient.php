@@ -4,8 +4,6 @@ namespace LBChat\Database;
 use LBChat\ChatClient;
 use LBChat\Command\Server\InfoCommand;
 use LBChat\Integration\IUserSupport;
-use LBChat\Integration\JoomlaUserSupport;
-use LBChat\Integration\LBUserSupport;
 use Ratchet\ConnectionInterface;
 
 class SQLChatClient extends ChatClient {

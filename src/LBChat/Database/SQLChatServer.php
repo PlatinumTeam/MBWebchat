@@ -23,6 +23,7 @@ class SQLChatServer extends ChatServer {
 
 	/**
 	 * @param array $databases
+	 * @param IUserSupport $support
 	 */
 	public function __construct($databases, IUserSupport $support) {
 		parent::__construct();

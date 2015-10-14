@@ -154,6 +154,7 @@ class ChatClient {
 	 */
 	public function setLocation($location) {
 		$this->location = $location;
+		$this->server->sendAllUserlists();
 	}
 
 	/**
