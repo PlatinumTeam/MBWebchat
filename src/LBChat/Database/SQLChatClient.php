@@ -2,6 +2,7 @@
 namespace LBChat\Database;
 
 use LBChat\ChatClient;
+use LBChat\Command\Server\AcceptTOSCommand;
 use LBChat\Command\Server\InfoCommand;
 use LBChat\Integration\IUserSupport;
 use Ratchet\ConnectionInterface;
@@ -17,6 +18,17 @@ class SQLChatClient extends ChatClient {
 	}
 
 	public function onLogin() {
+		//Check if they need to accept the TOS
+		$query = $this->db("platinum")->prepare("SELECT `acceptedTos` FROM `users` WHERE `username` = :username");
+		$query->bindParam(":username", $this->getUsername());
+		$query->execute();
+		if (!$query->fetchColumn(0)) {
+			//They do need to accept the TOS
+			$command = new AcceptTOSCommand($this->server);
+			$command->execute($this);
+			return;
+		}
+
 		$command = new InfoCommand($this->server);
 		$command->execute($this);
 

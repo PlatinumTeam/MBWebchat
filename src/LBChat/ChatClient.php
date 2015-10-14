@@ -85,8 +85,10 @@ class ChatClient {
 	 * Callback for when the client logs out, before disconnecting
 	 */
 	public function onLogout() {
-		$this->server->sendAllUserlists();
-		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "logout", -1, $this->location), $this);
+		if ($this->loggedIn) {
+			$this->server->sendAllUserlists();
+			$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "logout", - 1, $this->location), $this);
+		}
 	}
 
 	/**

@@ -27,6 +27,7 @@ function _addCommand($name, $class = null) {
 //Add all the commands
 _addCommands(
 	array(
+		"AcceptTOS",
 		"Chat",
 		"Identify",
 		"Key",
