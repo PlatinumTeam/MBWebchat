@@ -72,6 +72,10 @@ class SQLChatClient extends ChatClient {
 		return $this->support->getTitles($this->getUsername());
 	}
 
+	public function tryLogin($type, $data) {
+		return $this->support->tryLogin($this->getUsername(), $type, $data);
+	}
+
 	/**
 	 * @param $name
 	 * @return Database

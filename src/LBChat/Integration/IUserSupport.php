@@ -55,4 +55,13 @@ interface IUserSupport {
 	 * @return array An array containing the flair, prefix, and suffix in that order.
 	 */
 	public function getTitles($username);
+
+	/**
+	 * Attempt to login a user.
+	 * @param string $username The user's username
+	 * @param string $type Either "key" or "password" for which method to use
+	 * @param string $data The key/password to use
+	 * @return boolean If the login succeeded
+	 */
+	public function tryLogin($username, $type, $data);
 }

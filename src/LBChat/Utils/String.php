@@ -56,4 +56,22 @@ abstract class String {
 			return self::decodeSpaces($word);
 		}, $words);
 	}
+
+	/**
+	 * Decode the weak string encryption from MBP
+	 * @param string $str The string to decode
+	 * @return string The decoded string
+	 */
+	public static function degarbledeguck($string) {
+		if (substr($string, 0, 3) !== "gdg")
+			return $string;
+		$finish = "";
+		for ($i = 3; $i < strLen($string); $i += 2) {
+			$hex = substr($string, $i, 2);
+			$val = hexdec($hex);
+			$char = chr(128 - $val);
+			$finish = $char . $finish;
+		}
+		return $finish;
+	}
 }

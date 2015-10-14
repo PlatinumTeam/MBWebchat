@@ -65,6 +65,13 @@ class ChatClient {
 	}
 
 	/**
+	 * Disconnect the client from the server, closing all connections
+	 */
+	public function disconnect() {
+		$this->connection->close();
+	}
+
+	/**
 	 * Callback for when the client has successfully logged in
 	 */
 	public function onLogin() {
@@ -251,31 +258,29 @@ class ChatClient {
 	 * @param string $data The key/password to use for verification, depending on what is used in $type.
 	 */
 	public function login($type, $data) {
-		$status = false;
-		switch ($type) {
-		case "key":
-			$status = Login\Helper::tryKey($this->getUsername(), $data);
-			//Usually this is webchat
-			$this->location = 3;
-			break;
-		case "password":
-			$status = Login\Helper::tryPassword($this->getUsername(), $data);
-			//Usually this is in-game
-			$this->location = 0;
-			break;
-		}
-
-		if ($status === false) {
-			//Login failed
-			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_INVAILD);
-			$command->execute($this);
-		} else {
+		if ($this->tryLogin($type, $data)) {
 			//Login succeeded
 			$this->onLogin();
 
 			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_SUCCESS);
 			$command->execute($this);
+		} else {
+			//Login failed
+			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_INVAILD);
+			$command->execute($this);
+			$this->disconnect();
 		}
+	}
+
+	/**
+	 * Attempt to verify login details
+	 * @param string $type The type of login, either "key" or "password"
+	 * @param string $data The key/password to use for verification, depending on what is used in $type.
+	 * @return bool If the login was successful
+	 */
+	public function tryLogin($type, $data) {
+		//Base users have no login conditions
+		return true;
 	}
 
 	/**

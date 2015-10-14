@@ -21,7 +21,7 @@ class VerifyCommand extends Command implements IClientCommand {
 	 * Execute the given client command, applying any changes that it represents.
 	 */
 	public function execute() {
-		$this->client->login("password", $this->password);
+		$this->client->login("password", String::degarbledeguck($this->password));
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {

@@ -39,6 +39,10 @@ class JoomlaUserSupport implements IUserSupport {
 		$this->idCache = array();
 	}
 
+	/**
+	 * @param int $id The user's id
+	 * @return \JUser The user object for this user
+	 */
 	protected function getUser($id) {
 		//Cache the user results into an array because getUser takes forever
 		if (array_key_exists($id, $this->userCache)) {
@@ -111,5 +115,71 @@ class JoomlaUserSupport implements IUserSupport {
 			@$rows[1]["title"],
 			@$rows[2]["title"]
 		);
+	}
+
+	/**
+	 * Attempt to login a user.
+	 * @param string $username The user's username
+	 * @param string $type Either "key" or "password" for which method to use
+	 * @param string $data The key/password to use
+	 * @return boolean If the login succeeded
+	 */
+	public function tryLogin($username, $type, $data) {
+		if ($type === "key") {
+			if ($this->backup !== null) {
+				return $this->backup->tryLogin($username, $type, $data);
+			}
+			//Cannot currently handle key-based logins
+			return false;
+		}
+		if ($type === "password") {
+			$user = $this->getUser($username);
+
+			if ($user->id === 0) {
+				//User does not exist
+				return false;
+			}
+
+			if ($user->guest) {
+				//Cannot login guests
+				return false;
+			}
+
+			if ($user->block) {
+				if ($user->activation !== "") {
+					//You're not activated
+
+					//TODO: Automatically activate them
+					return true;
+				} else {
+					//You're banned
+					return false;
+				}
+			}
+			if (!$this->checkPassword($username, $data)) {
+				//Invalid password
+				return false;
+			}
+			return true;
+		}
+		//Unsupported login type
+		return false;
+	}
+
+	/**
+	 * Check if a user provided the correct password
+	 * @param string $username The user's username
+	 * @param string $password The user's password
+	 * @return boolean If their password matches
+	 */
+	protected function checkPassword($username, $password) {
+		$credentials = array("username" => $username, "password" => $password);
+		$options = array("remember" => false, "silent" => false);
+
+		//Get the global JAuthentication object.
+		$authenticate = \JAuthentication::getInstance();
+		$response = $authenticate->authenticate($credentials, $options);
+
+		return ($response->status === \JAuthentication::STATUS_SUCCESS);
 	}
 }
