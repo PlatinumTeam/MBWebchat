@@ -18,7 +18,7 @@ class WhisperCommand extends Command implements IChatCommand {
 		parent::__construct($server, $client);
 		if (strpos($recipient, ",") === false) $this->recipient = $recipient;
 		else{
-			$this->recipientarray = String::token_to_array($recipient);
+			$this->recipientarray = explode(",", $recipient);
 		}
 		$this->message = $message;
 	}
