@@ -56,6 +56,21 @@ abstract class String {
 			return self::decodeSpaces($word);
 		}, $words);
 	}
+	/**
+	 * Split a word into tokens, and return an array of them
+	 * @param string $word
+	 * @return array
+	 */
+	public static function token_to_array($word){
+		$array = array();
+		$token = strtok($word, ",");
+		array_push($array, $token);
+		while ($token !== false){
+			$token = strtok(",");
+			array_push($array, $token);
+		}
+		return $array;
+	}
 
 	/**
 	 * Decode the weak string encryption from MBP
