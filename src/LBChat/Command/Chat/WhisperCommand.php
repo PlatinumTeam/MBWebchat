@@ -10,27 +10,27 @@ use LBChat\Utils\String;
 class WhisperCommand extends Command implements IChatCommand {
 
 	protected $recipient;
-	protected $recipientarray;
+	protected $recipientArray;
 
 	protected $message;
 
-	public function __construct(ChatServer $server, ChatClient $client, ChatClient $recipient = null, ChatClient $recipientarray = null, $message) {
+	public function __construct(ChatServer $server, ChatClient $client, ChatClient $recipient = null, ChatClient $recipientArray = null, $message) {
 		parent::__construct($server, $client);
-		if (strpos($recipient, ",") === false) $this->recipient = $recipient;
-		else{
-			$this->recipientarray = explode(",", $recipient);
+		if (strpos($recipient, ",") === false) {
+			$this->recipient = $recipient;
+		} else {
+			$this->recipientArray = explode(",", $recipient);
 		}
 		$this->message = $message;
 	}
 
 	public function execute() {
-		if ($this->recipient != null){
+		if ($this->recipient != null) {
 			$message = "/whisper {$this->recipient->getUsername()} {$this->message}";
 			$chat = new ChatCommand($this->server, $this->client, $this->recipient, $message);
 			$chat->execute($this->recipient);
-		}
-		else{
-			foreach ($this->recipientarray as $recipient){
+		} else {
+			foreach ($this->recipientArray as $recipient) {
 				$message = "/whisper {$recipient->getUsername()} {$this->message}";
 				$chat = new ChatCommand($this->server, $this->client, $recipient, $message);
 				$chat->execute($this->recipient);
