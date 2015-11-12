@@ -29,6 +29,9 @@ _addCommands(
 	array(
 		"AcceptTOS",
 		"Chat",
+		"Friend",
+		"FriendDel",
+		"FriendList",
 		"Identify",
 		"Key",
 		"Location",

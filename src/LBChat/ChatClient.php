@@ -27,6 +27,7 @@ class ChatClient {
 	private $visible;
 	protected $loggedIn;
 	protected $guest;
+	private $friends;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
 		$this->server = $server;
@@ -42,6 +43,7 @@ class ChatClient {
 		$this->visible = true;
 		$this->loggedIn = false;
 		$this->guest = false;
+		$this->friends = array();
 	}
 
 	/**
@@ -374,5 +376,38 @@ class ChatClient {
 		$this->muted = false;
 		$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), array($this), "You have been unmuted.");
 		$chat->execute();
+	}
+
+	/**
+	 * Add a friend for a client
+	 * @param string $friend The friend's username
+	 */
+	public function addFriend($friend) {
+		if (!in_array($friend, $this->friends))
+			$this->friends[] = $friend;
+	}
+
+	/**
+	 * Remove a client's friend
+	 * @param string $friend The friend's username
+	 */
+	public function removeFriend($friend) {
+		if (in_array($friend, $this->friends)) {
+			//Find the position of the friend
+			$position = array_search($friend, $this->friends);
+			//Splice the object out from the middle of the array
+			array_splice($this->friends, $position, 1);
+		}
+	}
+
+	/**
+	 * Get the user's list of friends
+	 * @return array The user's friend list
+	 */
+	public function getFriendList() {
+		//Map each friend name to a username / display pair
+		return array_map(function ($friend) {
+			return array("username" => $friend, "display" => $friend);
+		}, $this->friends);
 	}
 }

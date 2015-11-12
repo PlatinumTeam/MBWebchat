@@ -116,9 +116,20 @@ class SQLChatClient extends ChatClient {
 	public function acceptTOS() {
 		$query = $this->db("platinum")->prepare("UPDATE `users` SET `acceptedTos` = 1 WHERE `username` = :username");
 		$query->bindParam(":username", $this->getUsername());
-		$result = $query->execute();
+		$query->execute();
 	}
 
+	public function addFriend($friend) {
+		$this->support->addFriend($this->getUsername(), $friend);
+	}
+
+	public function removeFriend($friend) {
+		$this->support->removeFriend($this->getUsername(), $friend);
+	}
+
+	public function getFriendList() {
+		return $this->support->getFriendList($this->getUsername());
+	}
 	/**
 	 * @param $name
 	 * @return Database

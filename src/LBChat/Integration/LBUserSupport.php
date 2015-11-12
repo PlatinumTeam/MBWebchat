@@ -133,4 +133,80 @@ class LBUserSupport implements IUserSupport {
 		//No user? Not sure if this is ever called
 		return false;
 	}
+
+	/**
+	 * Add a friend for a user
+	 * @param string $username The user's username
+	 * @param string $friend   The friend's username
+	 */
+	public function addFriend($username, $friend) {
+		//This database was designed by a moron.
+		//TODO: Make friends not by id, or everything by id
+		$friendId = $this->getId($friend);
+
+		//Check if they have this friend already
+		$query = $this->database->prepare("SELECT * FROM `friends` WHERE `username` = :username AND `friendid` = :friendid");
+		$query->bindParam(":username", $username);
+		$query->bindParam(":friendId", $friendId);
+		$query->execute();
+
+		//Already have this friend, don't add them twice
+		if ($query->rowCount()) {
+			return;
+		}
+
+		//Don't have them, add them
+		$query = $this->database->prepare("INSERT INTO `friends` (`username`, `friendid`) VALUES (:username, :friendId)");
+		$query->bindParam(":username", $username);
+		$query->bindParam(":friendId", $friendId);
+		$query->execute();
+	}
+
+	/**
+	 * Add a user's friend
+	 * @param string $username The user's username
+	 * @param string $friend   The friend's username
+	 */
+	public function removeFriend($username, $friend) {
+		//This database was designed by a moron.
+		//TODO: Make friends not by id, or everything by id
+		$friendId = $this->getId($friend);
+
+		//Check if they have this friend already
+		$query = $this->database->prepare("SELECT * FROM `friends` WHERE `username` = :username AND `friendid` = :friendid");
+		$query->bindParam(":username", $username);
+		$query->bindParam(":friendId", $friendId);
+		$query->execute();
+
+		//Don't have this friend, can't remove them
+		if (!$query->rowCount()) {
+			return;
+		}
+
+		//Remove this friend from our list
+		$query = $this->database->prepare("DELETE FROM `friends` WHERE `username` = :username AND `friendid` = :friendid");
+		$query->bindParam(":username", $username);
+		$query->bindParam(":friendId", $friendId);
+		$query->execute();
+	}
+
+	/**
+	 * Get a user's friend list
+	 * @param string $username The user's username
+	 * @return array The user's friend list
+	 */
+	public function getFriendList($username) {
+		//This database was designed by a moron.
+		//TODO: Make friends not by id, or everything by id
+		$query = $this->database->prepare("SELECT `username` FROM `users` WHERE `id` IN (SELECT `friendid` FROM `friends` WHERE `username` = :username)");
+		$query->bindParam(":username", $username);
+		$query->execute();
+		$list = $query->fetchAll(\PDO::FETCH_ASSOC);
+
+		//Convert this list of usernames into username / display pairs
+		$list = array_map(function ($friend) {
+			return array("username" => $friend["username"], "display" => $this->getDisplayName($friend["username"]));
+		}, $list);
+		return $list;
+	}
 }

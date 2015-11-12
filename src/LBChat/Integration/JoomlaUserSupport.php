@@ -240,4 +240,42 @@ class JoomlaUserSupport implements IUserSupport {
 		//Couldn't find you? Probably a guest in this case.
 		return false;
 	}
+
+	/**
+	 * Add a friend for a user
+	 * @param string $username The user's username
+	 * @param string $friend   The friend's username
+	 */
+	public function addFriend($username, $friend) {
+		if ($this->backup !== null)
+			$this->backup->addFriend($username, $friend);
+	}
+
+	/**
+	 * Add a user's friend
+	 * @param string $username The user's username
+	 * @param string $friend   The friend's username
+	 */
+	public function removeFriend($username, $friend) {
+		if ($this->backup !== null)
+			$this->backup->removeFriend($username, $friend);
+	}
+
+	/**
+	 * Get a user's friend list
+	 * @param string $username The user's username
+	 * @return array The user's friend list
+	 */
+	public function getFriendList($username) {
+		if ($this->backup !== null) {
+			//Take the friend list from the backup and apply getDisplayName to
+			// all the users so we get correct display names.
+			return array_map(function ($friendInfo) {
+				return array($friendInfo["username"], $this->getDisplayName($friendInfo["username"]));
+			}, $this->backup->getFriendList($username));
+		}
+
+		//Unimplemented
+		return array();
+	}
 }

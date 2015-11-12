@@ -85,4 +85,25 @@ interface IUserSupport {
 	 * @return boolean If the login succeeded
 	 */
 	public function tryLogin($username, $type, $data);
+
+	/**
+	 * Add a friend for a user
+	 * @param string $username The user's username
+	 * @param string $friend The friend's username
+	 */
+	public function addFriend($username, $friend);
+
+	/**
+	 * Add a user's friend
+	 * @param string $username The user's username
+	 * @param string $friend The friend's username
+	 */
+	public function removeFriend($username, $friend);
+
+	/**
+	 * Get a user's friend list
+	 * @param string $username The user's username
+	 * @return array The user's friend list
+	 */
+	public function getFriendList($username);
 }
