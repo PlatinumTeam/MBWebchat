@@ -127,6 +127,10 @@ class JoomlaUserSupport implements IUserSupport {
 	 * @return boolean If the login succeeded
 	 */
 	public function tryLogin($username, $type, $data) {
+		if ($type === "guest") {
+			//Guests get access automatically
+			return true;
+		}
 		if ($type === "key") {
 			if ($this->backup !== null) {
 				return $this->backup->tryLogin($username, $type, $data);
@@ -183,5 +187,24 @@ class JoomlaUserSupport implements IUserSupport {
 		$response = $authenticate->authenticate($credentials, $options);
 
 		return ($response->status === \JAuthentication::STATUS_SUCCESS);
+	}
+
+	/**
+	 * Get a temporary username for a guest
+	 * @return string The guest's username
+	 */
+	public function getGuestUsername() {
+		//Generate a random username
+		$username = "Guest_" . substr(md5(time()), 0, 8);
+		return $username;
+	}
+
+	/**
+	 * Determine if a user is a guest by their username
+	 * @param string $username The username to check
+	 * @return boolean If they're a guest
+	 */
+	public function isGuest($username) {
+		return (stristr($username, "Guest_") !== false);
 	}
 }

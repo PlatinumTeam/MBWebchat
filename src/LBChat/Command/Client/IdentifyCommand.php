@@ -7,6 +7,7 @@ use LBChat\Command\CommandFactory;
 
 class IdentifyCommand extends Command implements IClientCommand {
 
+	const GUEST_LOGIN_NAME = "Guest";
 	protected $username;
 
 	public function __construct(ChatServer $server, ChatClient $client, $username) {
@@ -15,7 +16,12 @@ class IdentifyCommand extends Command implements IClientCommand {
 	}
 
 	public function execute() {
-		$this->client->setUsername($this->username);
+		if ($this->username === self::GUEST_LOGIN_NAME) {
+			//They're a guest; they need a guest name
+			$this->client->setGuest();
+		} else {
+			$this->client->setUsername($this->username);
+		}
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {

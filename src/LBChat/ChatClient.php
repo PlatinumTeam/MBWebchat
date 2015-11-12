@@ -25,6 +25,7 @@ class ChatClient {
 	private $muteTime;
 	private $visible;
 	protected $loggedIn;
+	protected $guest;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection) {
 		$this->server = $server;
@@ -39,6 +40,7 @@ class ChatClient {
 		$this->muteTime = 0;
 		$this->visible = true;
 		$this->loggedIn = false;
+		$this->guest = false;
 	}
 
 	/**
@@ -124,6 +126,24 @@ class ChatClient {
 	public function setUsername($username) {
 		$this->username = $username;
 		$this->display = $username;
+	}
+
+	/**
+	 * Get if the client is a guest
+	 * @return bool If the client is a guest
+	 */
+	public function isGuest() {
+		return $this->guest;
+	}
+
+
+	/**
+	 * Set the client to have a guest's username
+	 */
+	public function setGuest() {
+		$this->setUsername("Guest");
+		$this->guest = true;
+		$this->login("guest", "guest");
 	}
 
 	/**

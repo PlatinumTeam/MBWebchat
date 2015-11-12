@@ -75,4 +75,23 @@ class LBUserSupport implements IUserSupport {
 		//Cannot handle other types of logins
 		return false;
 	}
+
+	/**
+	 * Get a temporary username for a guest
+	 * @return string The guest's username
+	 */
+	public function getGuestUsername() {
+		//Generate a random username
+		$username = "Guest_" . substr(md5(time()), 0, 8);
+		return $username;
+	}
+
+	/**
+	 * Determine if a user is a guest by their username
+	 * @param string $username The username to check
+	 * @return boolean If they're a guest
+	 */
+	public function isGuest($username) {
+		return (stristr($username, "Guest_") !== false);
+	}
 }

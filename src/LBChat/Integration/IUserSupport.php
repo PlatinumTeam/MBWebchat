@@ -57,6 +57,19 @@ interface IUserSupport {
 	public function getTitles($username);
 
 	/**
+	 * Get a temporary username for a guest
+	 * @return string The guest's username
+	 */
+	public function getGuestUsername();
+
+	/**
+	 * Determine if a user is a guest by their username
+	 * @param string $username The username to check
+	 * @return boolean If they're a guest
+	 */
+	public function isGuest($username);
+
+	/**
 	 * Attempt to login a user.
 	 * @param string $username The user's username
 	 * @param string $type Either "key" or "password" for which method to use

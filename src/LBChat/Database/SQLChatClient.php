@@ -86,6 +86,12 @@ class SQLChatClient extends ChatClient {
 		return $this->support->tryLogin($this->getUsername(), $type, $data);
 	}
 
+	public function setGuest() {
+		parent::setGuest();
+		//Get us an actual guest username
+		$this->setUsername($this->support->getGuestUsername());
+	}
+
 	/**
 	 * @param $name
 	 * @return Database
