@@ -115,9 +115,7 @@ class ChatClient {
 	}
 
 	public function getAddress() {
-		$connection = $this->connection;
-		/* @var Connection $connection */
-		return $connection->getRemoteAddress();
+		return $this->connection->remoteAddress;
 	}
 
 	/**
