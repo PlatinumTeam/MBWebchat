@@ -59,6 +59,13 @@ class SQLChatClient extends ChatClient {
 		$query = $this->db("platinum")->prepare("DELETE FROM `loggedin` WHERE `username` = :username LIMIT 1");
 		$query->bindParam(":username", $this->getUsername());
 		$query->execute();
+
+		//If we're a guest, we should clean up ourselves.
+		if ($this->isGuest()) {
+			$query = $this->db("platinum")->prepare("DELETE FROM `users` WHERE `username` = :username LIMIT 1");
+			$query->bindParam(":username", $this->getUsername());
+			$query->execute();
+		}
 	}
 
 	public function getId() {
