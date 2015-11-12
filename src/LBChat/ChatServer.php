@@ -125,7 +125,7 @@ class ChatServer implements MessageComponentInterface {
 	/**
 	 * Finds the ChatClient object associated with a given ConnectionInterface
 	 * @param ConnectionInterface $conn
-	 * @return ChatClient
+	 * @return ChatClient The client for the given interface
 	 */
 	protected function resolveClient(ConnectionInterface $conn) {
 		return $this->connections[$conn];
@@ -134,8 +134,8 @@ class ChatServer implements MessageComponentInterface {
 	/**
 	 * Finds a client in the server by name. Searches first by username, then by display name
 	 * if no clients are found.
-	 * @param $name
-	 * @return ChatClient
+	 * @param string $name The name of the client to find
+	 * @return ChatClient The client with that name
 	 */
 	public function findClient($name) {
 		$name = strtolower($name);
@@ -204,7 +204,7 @@ class ChatServer implements MessageComponentInterface {
 
 	/**
 	 * Get all of the clients in the server
-	 * @return \SplObjectStorage
+	 * @return \SplObjectStorage A storage of all the clients
 	 */
 	public function getAllClients() {
 		return $this->clients;
@@ -212,7 +212,7 @@ class ChatServer implements MessageComponentInterface {
 
 	/**
 	 * Schedule a callback to be evaluated after a specific amount of time
-	 * @param          $time
+	 * @param          $time  
 	 * @param callable $callback
 	 * @return TimerInterface
 	 */

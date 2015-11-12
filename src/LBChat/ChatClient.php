@@ -99,7 +99,7 @@ class ChatClient {
 	/**
 	 * Compare one client to another
 	 * @param ChatClient $other The other client
-	 * @return bool
+	 * @return bool If the two clients are equal
 	 */
 	public function compare(ChatClient $other) {
 		return $other->connection === $this->connection;
@@ -107,20 +107,24 @@ class ChatClient {
 
 	/**
 	 * Get the client's user Id
-	 * @return int
+	 * @return int The client's user ID
 	 */
 	public function getId() {
 		//No database access in this class, just use the resourceId on the connection
 		return $this->connection->resourceId;
 	}
 
+	/**
+	 * Get the client's IP address
+	 * @return string The client's IP address
+	 */
 	public function getAddress() {
 		return $this->connection->remoteAddress;
 	}
 
 	/**
 	 * Get the client's username
-	 * @return string
+	 * @return string The client's username
 	 */
 	public function getUsername() {
 		return $this->username;
@@ -155,7 +159,7 @@ class ChatClient {
 
 	/**
 	 * Get the client's display name.
-	 * @return string
+	 * @return string The client's display name
 	 */
 	public function getDisplayName() {
 		return $this->display;
@@ -171,7 +175,7 @@ class ChatClient {
 
 	/**
 	 * Get the client's Location.
-	 * @return int
+	 * @return int The client's location
 	 */
 	public function getLocation() {
 		return $this->location;
@@ -188,7 +192,7 @@ class ChatClient {
 
 	/**
 	 * Get the client's access.
-	 * @return int
+	 * @return int The client's access
 	 */
 	public function getAccess() {
 		return $this->access;
@@ -204,7 +208,7 @@ class ChatClient {
 
 	/**
 	 * Get the client's privilege level (different from access as Guests are 0 instead of 3)
-	 * @return int
+	 * @return int The client's privilege level
 	 */
 	public function getPrivilege() {
 		switch ($this->getAccess()) {
@@ -216,7 +220,7 @@ class ChatClient {
 
 	/**
 	 * Get the client's color
-	 * @return string
+	 * @return string The client's color
 	 */
 	public function getColor() {
 		return $this->color;
@@ -232,7 +236,7 @@ class ChatClient {
 
 	/**
 	 * Get the client's titles
-	 * @return array
+	 * @return array The client's titles
 	 */
 	public function getTitles() {
 		return $this->titles;
@@ -246,13 +250,18 @@ class ChatClient {
 		$this->titles = $titles;
 	}
 
+	/**
+	 * Set a specific title on a client
+	 * @param int $index The index of the title to set
+	 * @param string $title The title which will be set
+	 */
 	public function setTitle($index, $title) {
 		$this->titles[$index] = $title;
 	}
 
 	/**
 	 * Get if the client should be displayed on user lists and accessible via commands.
-	 * @return bool
+	 * @return bool If the client is visible
 	 */
 	public function getVisible() {
 		return $this->visible;
@@ -260,7 +269,7 @@ class ChatClient {
 
 	/**
 	 * Set whether the client should be displayed on user lists and accessible via commands.
-	 * @param bool $visible
+	 * @param bool $visible If the client should be displayed
 	 */
 	public function setVisible($visible) {
 		$this->visible = $visible;
@@ -268,7 +277,7 @@ class ChatClient {
 
 	/**
 	 * Get if the client is logged in
-	 * @return bool
+	 * @return bool If the client is logged in
 	 */
 	public function getLoggedIn() {
 		return $this->loggedIn;
@@ -334,7 +343,7 @@ class ChatClient {
 
 	/**
 	 * Get if the client is muted
-	 * @return bool
+	 * @return bool If the client is muted
 	 */
 	public function isMuted() {
 		return $this->muted;
@@ -342,7 +351,7 @@ class ChatClient {
 
 	/**
 	 * Get for how long the client is muted
-	 * @return int
+	 * @return int The length of the client's mute, in seconds
 	 */
 	public function getMuteTime() {
 		return $this->muteTime;
