@@ -48,6 +48,9 @@ class WhisperCommand extends Command implements IChatCommand {
 		//Remove any null players
 		$recipients = array_filter($recipients);
 
+		//Don't let us message the same person twice
+		$recipients = array_unique($recipients);
+
 		//If nobody was added, fail
 		if (count($recipients) === 0) {
 			return InvalidCommand::createUnknownUser($server, $client, $user);
