@@ -10,6 +10,7 @@ class IdentifyCommand extends Command implements IServerCommand {
 	const TYPE_OUTOFDATE = 3;
 	const TYPE_CHALLENGE = 4;
 	const TYPE_SUCCESS = 5;
+	const TYPE_BANNED = 6;
 
 	protected $type;
 
@@ -44,6 +45,9 @@ class IdentifyCommand extends Command implements IServerCommand {
 			$logged = new LoggedCommand($this->server);
 			$logged->execute($client);
 
+			break;
+		case self::TYPE_BANNED:
+			$client->send("IDENTIFY BANNED");
 			break;
 		}
 	}

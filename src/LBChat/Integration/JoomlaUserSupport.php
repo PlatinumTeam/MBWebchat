@@ -219,4 +219,25 @@ class JoomlaUserSupport implements IUserSupport {
 	public function isGuest($username) {
 		return (stristr($username, "Guest_") !== false);
 	}
+
+	/**
+	 * Check if a user is banned from the site
+	 * @param string $username The username to check
+	 * @param string $address  The user's IP address
+	 * @return boolean If that user is banned
+	 */
+	public function isBanned($username, $address) {
+		//The backup takes priority here because we have either/or
+		if ($this->backup !== null && $this->backup->isBanned($username, $address))
+			return true;
+
+		$user = $this->getUser($this->getId($username));
+		if ($user !== null) {
+			//You're blocked and activated. That means you're banned
+			return $user->block && $user->activation === "";
+		}
+
+		//Couldn't find you? Probably a guest in this case.
+		return false;
+	}
 }

@@ -70,6 +70,14 @@ interface IUserSupport {
 	public function isGuest($username);
 
 	/**
+	 * Check if a user is banned from the site
+	 * @param string $username The username to check
+	 * @param string $address The user's IP address
+	 * @return boolean If that user is banned
+	 */
+	public function isBanned($username, $address);
+
+	/**
 	 * Attempt to login a user.
 	 * @param string $username The user's username
 	 * @param string $type Either "key" or "password" for which method to use

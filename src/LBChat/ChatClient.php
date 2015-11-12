@@ -6,6 +6,7 @@ use LBChat\Command\Server\InvalidCommand;
 use LBChat\Command\Server\NotifyCommand;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
+use React\Socket\Connection;
 
 /**
  * A basic chat client class that outlines how clients behave.
@@ -111,6 +112,12 @@ class ChatClient {
 	public function getId() {
 		//No database access in this class, just use the resourceId on the connection
 		return $this->connection->resourceId;
+	}
+
+	public function getAddress() {
+		$connection = $this->connection;
+		/* @var Connection $connection */
+		return $connection->getRemoteAddress();
 	}
 
 	/**

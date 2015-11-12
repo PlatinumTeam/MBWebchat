@@ -3,6 +3,7 @@ namespace LBChat\Database;
 
 use LBChat\ChatClient;
 use LBChat\Command\Server\AcceptTOSCommand;
+use LBChat\Command\Server\IdentifyCommand;
 use LBChat\Command\Server\InfoCommand;
 use LBChat\Integration\IUserSupport;
 use Ratchet\ConnectionInterface;
@@ -18,6 +19,16 @@ class SQLChatClient extends ChatClient {
 	}
 
 	public function onLogin() {
+		//If we're banned, don't let us on
+		if ($this->support->isBanned($this->getUsername(), $this->getAddress())) {
+			//Let us
+			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_BANNED);
+			$command->execute($this);
+			//Close our connection
+			$this->disconnect();
+			return false;
+		}
+
 		//Check if they need to accept the TOS
 		$query = $this->db("platinum")->prepare("SELECT `acceptedTos` FROM `users` WHERE `username` = :username");
 		$query->bindParam(":username", $this->getUsername());

@@ -101,4 +101,36 @@ class LBUserSupport implements IUserSupport {
 	public function isGuest($username) {
 		return (stristr($username, "Guest_") !== false);
 	}
+
+	/**
+	 * Check if a user is banned from the site
+	 * @param string $username The username to check
+	 * @param string $address  The user's IP address
+	 * @return boolean If that user is banned
+	 */
+	public function isBanned($username, $address) {
+		//Check for IP bans
+		$query = $this->database->prepare("SELECT * FROM `bannedips` WHERE `address` = :address");
+		$query->bindParam(":address", $address);
+		$query->execute();
+
+		if ($query->rowCount() > 0) {
+			//Wow, someone actually got IP-banned. What are the chances.
+			return true;
+		}
+
+		//Check for username bans
+		$query = $this->database->prepare("SELECT `banned` FROM `users` WHERE `username` = :username");
+		$query->bindParam(":username", $username);
+		$query->execute();
+
+		//Make sure they exist.
+		if ($query) {
+			//Whatever the database says
+			return $query->fetchColumn(0);
+		}
+
+		//No user? Not sure if this is ever called
+		return false;
+	}
 }
