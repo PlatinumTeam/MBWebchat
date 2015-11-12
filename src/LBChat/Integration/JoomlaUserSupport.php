@@ -75,6 +75,10 @@ class JoomlaUserSupport implements IUserSupport {
 	}
 
 	public function getUsername($username) {
+		//If we can't handle this user, maybe our backup can
+		if ($this->getId($username) === null && $this->backup !== null)
+			return $this->backup->getUsername($username);
+
 		return $this->getUser($this->getId($username))->username;
 	}
 
@@ -85,6 +89,10 @@ class JoomlaUserSupport implements IUserSupport {
 	}
 
 	public function getDisplayName($username) {
+		//If we can't handle this user, maybe our backup can
+		if ($this->getId($username) === null && $this->backup !== null)
+			return $this->backup->getDisplayName($username);
+
 		return self::getUser(self::getId($username))->name;
 	}
 
@@ -194,6 +202,10 @@ class JoomlaUserSupport implements IUserSupport {
 	 * @return string The guest's username
 	 */
 	public function getGuestUsername() {
+		if ($this->backup !== null) {
+			return $this->backup->getGuestUsername();
+		}
+
 		//Generate a random username
 		$username = "Guest_" . substr(md5(time()), 0, 8);
 		return $username;

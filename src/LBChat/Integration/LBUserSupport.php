@@ -83,6 +83,13 @@ class LBUserSupport implements IUserSupport {
 	public function getGuestUsername() {
 		//Generate a random username
 		$username = "Guest_" . substr(md5(time()), 0, 8);
+
+		// Add them to the database
+		$query = $this->database->prepare("INSERT INTO `users` (`display`, `username`, `pass`, `salt`, `email`, `showemail`, `secretq`, `secreta`, `rating_mp`, `guest`) VALUES (:display, :username, 'guest', 'guest', '', 0, '', '', -1, 1)");
+		$query->bindParam(":display", $username);
+		$query->bindParam(":username", $username);
+		$query->execute();
+
 		return $username;
 	}
 
