@@ -17,6 +17,8 @@ $mainframe->initialise();
 jimport("joomla.user.authorization");
 jimport("joomla.user.authentication");
 
+restore_exception_handler();
+
 class JoomlaUserSupport implements IUserSupport {
 	const cacheTime = 10;
 	/**
