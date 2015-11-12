@@ -11,7 +11,7 @@ class PingCommand extends Command implements IChatCommand {
 	 * Execute the given client command, applying any changes that it represents.
 	 */
 	public function execute() {
-		$whisper = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client, "Pong!");
+		$whisper = new WhisperCommand($this->server, ServerChatClient::getClient(), array($this->client), "Pong!");
 		$whisper->execute();
 	}
 

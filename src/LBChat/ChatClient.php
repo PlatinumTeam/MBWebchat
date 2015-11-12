@@ -349,7 +349,7 @@ class ChatClient {
 	public function cancelMute() {
 		$this->muteTime = 0;
 		$this->muted = false;
-		$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this, "You have been unmuted.");
+		$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), array($this), "You have been unmuted.");
 		$chat->execute();
 	}
 }

@@ -17,7 +17,7 @@ class InvalidCommand extends Command implements IChatCommand {
 
 	public function execute() {
 		//Send them a quiet whisper
-		$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client, $this->message);
+		$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), array($this->client), $this->message);
 		$chat->execute();
 	}
 

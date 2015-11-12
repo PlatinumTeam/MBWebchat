@@ -24,7 +24,7 @@ class MuteCommand extends Command implements IChatCommand {
 		// a mistake and did a negative, or you were trying to un-mute someone. I'll be nice about it
 		// and let the mod/admin know what to do.
 		if ($this->time < 0) {
-			$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), $this->client,
+			$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), array($this->client),
 				"Cannot give a negative mute. Use /unmute <display name> to un-mute someone.");
 			$chat->execute();
 
@@ -50,7 +50,7 @@ class MuteCommand extends Command implements IChatCommand {
 		case 0:
 			//Check your own mute
 			$message = self::formatInfoMessage($client, true);
-			return new WhisperCommand($server, ServerChatClient::getClient(), $client, $message);
+			return new WhisperCommand($server, ServerChatClient::getClient(), array($client), $message);
 		case 1:
 			//Check someone's mute time
 			$user = array_shift($words);
@@ -60,7 +60,7 @@ class MuteCommand extends Command implements IChatCommand {
 				return InvalidCommand::createUnknownUser($server, $client, $user);
 			}
 			$message = self::formatInfoMessage($recipient, false);
-			return new WhisperCommand($server, ServerChatClient::getClient(), $client, $message);
+			return new WhisperCommand($server, ServerChatClient::getClient(), array($client), $message);
 		case 2:
 			//Mute someone for a time
 			$user = array_shift($words);
