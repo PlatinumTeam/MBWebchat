@@ -5,7 +5,6 @@
 * Version checking 
 * IP Banning 
 * Block lists 
-* Friend lists 
 * Sending messages to offline users 
 * Caps filter 
 * Politics filter 
