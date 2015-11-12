@@ -3,7 +3,6 @@
 * SQL-based kicks 
 * Read notifications from SQL 
 * Version checking 
-* Guest login 
 * IP Banning 
 * Block lists 
 * Friend lists 
