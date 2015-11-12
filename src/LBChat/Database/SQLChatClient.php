@@ -26,13 +26,14 @@ class SQLChatClient extends ChatClient {
 			//They do need to accept the TOS
 			$command = new AcceptTOSCommand($this->server);
 			$command->execute($this);
-			return;
+			return false;
 		}
 
 		$command = new InfoCommand($this->server);
 		$command->execute($this);
 
-		parent::onLogin();
+		if (!parent::onLogin())
+			return false;
 
 		$query = $this->db("platinum")->prepare("INSERT INTO `loggedin` SET
 				`username` = :username,
@@ -48,6 +49,8 @@ class SQLChatClient extends ChatClient {
 		$query->execute();
 
 		$this->server->sendAllUserlists();
+
+		return true;
 	}
 
 	public function onLogout() {
@@ -90,6 +93,12 @@ class SQLChatClient extends ChatClient {
 		parent::setGuest();
 		//Get us an actual guest username
 		$this->setUsername($this->support->getGuestUsername());
+	}
+
+	public function acceptTOS() {
+		$query = $this->db("platinum")->prepare("UPDATE `users` SET `acceptedTos` = 1 WHERE `username` = :username");
+		$query->bindParam(":username", $this->getUsername());
+		$result = $query->execute();
 	}
 
 	/**

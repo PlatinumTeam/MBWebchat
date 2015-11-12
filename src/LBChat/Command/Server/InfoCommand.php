@@ -6,6 +6,12 @@ use LBChat\Integration\LBServerSupport;
 
 class InfoCommand extends Command implements IServerCommand {
 	public function execute(ChatClient $client) {
+		//If the client is a guest, they don't know their username
+		if ($client->isGuest()) {
+			$username = $client->getUsername();
+			$client->send("INFO USERNAME $username");
+		}
+
 		//Basic user information
 		$access    = $client->getAccess();
 		$display   = $client->getDisplayName();

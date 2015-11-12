@@ -75,12 +75,14 @@ class ChatClient {
 
 	/**
 	 * Callback for when the client has successfully logged in
+	 * @return boolean If the login was successful
 	 */
 	public function onLogin() {
 		$this->loggedIn = true;
 
 		$this->server->sendAllUserlists();
 		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
+		return true;
 	}
 
 	/**
@@ -283,10 +285,10 @@ class ChatClient {
 	public function login($type, $data) {
 		if ($this->tryLogin($type, $data)) {
 			//Login succeeded
-			$this->onLogin();
-
-			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_SUCCESS);
-			$command->execute($this);
+			if ($this->onLogin()) {
+				$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_SUCCESS);
+				$command->execute($this);
+			}
 		} else {
 			//Login failed
 			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_INVAILD);
@@ -304,6 +306,13 @@ class ChatClient {
 	public function tryLogin($type, $data) {
 		//Base users have no login conditions
 		return true;
+	}
+
+	/**
+	 * Mark this client as having accepted the TOS
+	 */
+	public function acceptTOS() {
+		//Base users don't have any way of handling this
 	}
 
 	/**
