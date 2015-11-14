@@ -3,18 +3,18 @@ namespace LBChat\Integration;
 
 use LBChat\Database\Database;
 
-abstract class LBServerSupport {
+class LBServerSupport implements IServerSupport {
 	/**
 	 * @var Database $database
 	 */
-	protected static $database;
+	protected $database;
 
-	public static function setDatabase(Database $database) {
-		self::$database = $database;
+	public function __construct(Database $database) {
+		$this->database = $database;
 	}
 
-	public static function getPreference($key) {
-		$query = self::$database->prepare("SELECT `value` FROM `settings` WHERE `key` = :key");
+	public function getPreference($key) {
+		$query = $this->database->prepare("SELECT `value` FROM `settings` WHERE `key` = :key");
 		$query->bindParam(":key", $key);
 		$query->execute();
 
@@ -24,23 +24,23 @@ abstract class LBServerSupport {
 		return $query->fetchColumn(0);
 	}
 
-	public static function getStatusList() {
-		$query = self::$database->prepare("SELECT `status`, `display` FROM `statuses`");
+	public function getStatusList() {
+		$query = $this->database->prepare("SELECT `status`, `display` FROM `statuses`");
 		$query->execute();
 		return $query->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
-	public static function getColorList() {
-		$query = self::$database->prepare("SELECT `ident`, `color` FROM `chatcolors`");
+	public function getColorList() {
+		$query = $this->database->prepare("SELECT `ident`, `color` FROM `chatcolors`");
 		$query->execute();
 		return $query->fetchAll(\PDO::FETCH_ASSOC);
 	}
 
-	public static function getWelcomeMessage($webchat = false) {
-		$message = self::getPreference($webchat ? "webwelcome" : "welcome");
+	public function getWelcomeMessage($webchat = false) {
+		$message = $this->getPreference($webchat ? "webwelcome" : "welcome");
 
 		//Get qotd from the database
-		$query = self::$database->prepare("SELECT * FROM `qotd` WHERE `selected` = 1");
+		$query = $this->database->prepare("SELECT * FROM `qotd` WHERE `selected` = 1");
 		$query->execute();
 
 		//We may have more than one, pluralize the name if we do
