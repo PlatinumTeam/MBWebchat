@@ -10,24 +10,15 @@ use Ratchet\ConnectionInterface;
 
 class SQLChatClient extends ChatClient {
 	protected $databases;
-	protected $support;
 
 	public function __construct(SQLChatServer $server, ConnectionInterface $connection, array $databases, IUserSupport $support) {
-		parent::__construct($server, $connection);
+		parent::__construct($server, $connection, $support);
 		$this->databases = $databases;
-		$this->support = $support;
 	}
 
 	public function onLogin() {
-		//If we're banned, don't let us on
-		if ($this->support->isBanned($this->getUsername(), $this->getAddress())) {
-			//Let us
-			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_BANNED);
-			$command->execute($this);
-			//Close our connection
-			$this->disconnect();
+		if (!parent::onLogin())
 			return false;
-		}
 
 		//Check if they need to accept the TOS
 		$query = $this->db("platinum")->prepare("SELECT `acceptedTos` FROM `users` WHERE `username` = :username");
@@ -43,16 +34,12 @@ class SQLChatClient extends ChatClient {
 		$command = new InfoCommand($this->server);
 		$command->execute($this);
 
-		if (!parent::onLogin())
-			return false;
-
 		$query = $this->db("platinum")->prepare("INSERT INTO `loggedin` SET
-				`username` = :username,
-				`display` = :display,
-				`access` = :access,
-				`location` = :location
-			"
-		);
+			`username` = :username,
+			`display` = :display,
+			`access` = :access,
+			`location` = :location
+		");
 		$query->bindParam(":username", $this->getUsername());
 		$query->bindParam(":display", $this->getDisplayName());
 		$query->bindParam(":access", $this->getAccess());

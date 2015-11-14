@@ -114,7 +114,7 @@ class ChatServer implements MessageComponentInterface {
 	 * @param ConnectionInterface $conn
 	 */
 	protected function addClient(ConnectionInterface $conn) {
-		$client = new ChatClient($this, $conn);
+		$client = new ChatClient($this, $conn, $this->getUserSupport());
 		$this->connections->attach($conn, $client);
 		$this->clients->attach($client);
 	}

@@ -4,6 +4,7 @@ use LBChat\Command\Chat\WhisperCommand;
 use LBChat\Command\Server\IdentifyCommand;
 use LBChat\Command\Server\InvalidCommand;
 use LBChat\Command\Server\NotifyCommand;
+use LBChat\Integration\IUserSupport;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
 use React\Socket\Connection;
@@ -16,6 +17,7 @@ use React\Socket\Connection;
 class ChatClient {
 	protected $server;
 	protected $connection;
+	protected $support;
 	private $username;
 	private $display;
 	private $location;
@@ -29,9 +31,10 @@ class ChatClient {
 	protected $guest;
 	private $friends;
 
-	public function __construct(ChatServer $server, ConnectionInterface $connection) {
+	public function __construct(ChatServer $server, ConnectionInterface $connection, IUserSupport $support) {
 		$this->server = $server;
 		$this->connection = $connection;
+		$this->support = $support;
 		$this->username = "";
 		$this->display = "";
 		$this->location = 0;
@@ -81,6 +84,16 @@ class ChatClient {
 	 * @return boolean If the login was successful
 	 */
 	public function onLogin() {
+		//If we're banned, don't let us on
+		if ($this->support->isBanned($this->getUsername(), $this->getAddress())) {
+			//Let us
+			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_BANNED);
+			$command->execute($this);
+			//Close our connection
+			$this->disconnect();
+			return false;
+		}
+
 		$this->loggedIn = true;
 
 		$this->server->sendAllUserlists();
@@ -105,6 +118,22 @@ class ChatClient {
 	 */
 	public function compare(ChatClient $other) {
 		return $other->connection === $this->connection;
+	}
+
+	/**
+	 * Get the user's server
+	 * @return ChatServer The server
+	 */
+	public function getServer() {
+		return $this->server;
+	}
+
+	/**
+	 * Get the user's support connection
+	 * @return IUserSupport The support
+	 */
+	public function getSupport() {
+		return $this->support;
 	}
 
 	/**

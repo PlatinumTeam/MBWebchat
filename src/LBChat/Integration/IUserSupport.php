@@ -10,11 +10,6 @@ use LBChat\Database\Database;
  */
 interface IUserSupport {
 	/**
-	 * @param Database $database A Database to use for queries
-	 */
-	public function __construct(Database $database);
-
-	/**
 	 * Get a user's ID based on their username
 	 * @param string $username The user's username
 	 * @return int
