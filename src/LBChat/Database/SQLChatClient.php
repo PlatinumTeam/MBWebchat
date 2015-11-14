@@ -11,7 +11,7 @@ use Ratchet\ConnectionInterface;
 class SQLChatClient extends ChatClient {
 	protected $databases;
 
-	public function __construct(SQLChatServer $server, ConnectionInterface $connection, array $databases, IUserSupport $support) {
+	public function __construct(SQLChatServer $server, ConnectionInterface $connection, IUserSupport $support, array $databases) {
 		parent::__construct($server, $connection, $support);
 		$this->databases = $databases;
 	}
@@ -94,7 +94,7 @@ class SQLChatClient extends ChatClient {
 		$query = $this->db("platinum")->prepare("SELECT `acceptedTos` FROM `users` WHERE `username` = :username");
 		$query->bindParam(":username", $this->getUsername());
 		$query->execute();
-		return !$query->fetchColumn(0);
+		return $query->fetchColumn(0);
 	}
 
 	public function setAcceptedTOS($accepted) {

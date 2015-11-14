@@ -12,7 +12,7 @@ class AcceptTOSCommand extends Command implements IClientCommand {
 	}
 
 	public function execute() {
-		$this->client->acceptTOS();
+		$this->client->setAcceptedTOS(true);
 
 		//Continue with the normal login process
 		if ($this->client->onLogin()) {

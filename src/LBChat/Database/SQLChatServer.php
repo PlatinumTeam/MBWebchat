@@ -43,7 +43,7 @@ class SQLChatServer extends ChatServer {
 	 * @param ConnectionInterface $conn
 	 */
 	protected function addClient(ConnectionInterface $conn) {
-		$client = new SQLChatClient($this, $conn, $this->databases);
+		$client = new SQLChatClient($this, $conn, $this->getUserSupport(), $this->databases);
 		$this->connections->attach($conn, $client);
 		$this->clients->attach($client);
 	}

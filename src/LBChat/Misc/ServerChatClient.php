@@ -29,7 +29,7 @@ class ServerChatClient extends ChatClient {
 	 */
 	public static function create(ChatServer $server) {
 		self::$dummy = new DummyConnection();
-		self::$client = new ServerChatClient($server, self::$dummy);
+		self::$client = new ServerChatClient($server, self::$dummy, $server->getUserSupport());
 	}
 
 	/**
