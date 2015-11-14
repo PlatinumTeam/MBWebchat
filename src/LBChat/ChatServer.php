@@ -2,6 +2,8 @@
 namespace LBChat;
 use LBChat\Command\Server;
 use LBChat\Command\Server\IServerCommand;
+use LBChat\Integration\IServerSupport;
+use LBChat\Integration\IUserSupport;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
@@ -17,12 +19,18 @@ class ChatServer implements MessageComponentInterface {
 	protected $connections;
 	protected $clients;
 
+	protected $serverSupport;
+	protected $userSupport;
+
 	/**
 	 * @var LoopInterface $scheduler
 	 */
 	protected $scheduler;
 
-	public function __construct() {
+	public function __construct(IServerSupport $serverSupport, IUserSupport $userSupport) {
+		$this->serverSupport = $serverSupport;
+		$this->userSupport = $userSupport;
+
 		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
 
@@ -228,5 +236,21 @@ class ChatServer implements MessageComponentInterface {
 	 */
 	public function scheduleLoop($interval, callable $callback) {
 		return $this->scheduler->addPeriodicTimer($interval, $callback);
+	}
+
+	/**
+	 * Get the server's ServerSupport
+	 * @return IServerSupport The support
+	 */
+	public function getServerSupport() {
+		return $this->serverSupport;
+	}
+
+	/**
+	 * Get the server's UserSupport
+	 * @return IUserSupport The support
+	 */
+	public function getUserSupport() {
+		return $this->userSupport;
 	}
 }

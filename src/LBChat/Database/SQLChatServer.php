@@ -2,6 +2,7 @@
 namespace LBChat\Database;
 
 use LBChat\ChatServer;
+use LBChat\Integration\IServerSupport;
 use LBChat\Integration\IUserSupport;
 use Ratchet\ConnectionInterface;
 
@@ -17,19 +18,13 @@ class SQLChatServer extends ChatServer {
 	protected $databases;
 
 	/**
-	 * @var IUserSupport $support
-	 */
-	protected $support;
-
-	/**
 	 * @param array $databases
 	 * @param IUserSupport $support
 	 */
-	public function __construct($databases, IUserSupport $support) {
-		parent::__construct();
+	public function __construct(IServerSupport $serverSupport, IUserSupport $userSupport, $databases) {
+		parent::__construct($serverSupport, $userSupport);
 
 		$this->databases = $databases;
-		$this->support = $support;
 		$this->initDatabase();
 	}
 
@@ -48,7 +43,7 @@ class SQLChatServer extends ChatServer {
 	 * @param ConnectionInterface $conn
 	 */
 	protected function addClient(ConnectionInterface $conn) {
-		$client = new SQLChatClient($this, $conn, $this->databases, $this->support);
+		$client = new SQLChatClient($this, $conn, $this->databases);
 		$this->connections->attach($conn, $client);
 		$this->clients->attach($client);
 	}

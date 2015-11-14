@@ -22,8 +22,8 @@ class InfoCommand extends Command implements IServerCommand {
 		$client->send("INFO PRIVILEGE $privilege");
 
 		//Some global server stuff
-		$welcome = LBServerSupport::getWelcomeMessage($client->getLocation() === 3);
-		$default = LBServerSupport::getPreference("default"); //Default high score name
+		$welcome = $this->server->getServerSupport()->getWelcomeMessage($client->getLocation() === 3);
+		$default = $this->server->getServerSupport()->getPreference("default"); //Default high score name
 
 		$client->send("INFO WELCOME $welcome");
 		$client->send("INFO DEFAULT $default");
@@ -34,9 +34,9 @@ class InfoCommand extends Command implements IServerCommand {
 	}
 
 	protected function sendHelp(ChatClient $client) {
-		$info = LBServerSupport::getPreference("chathelp");
-		$format = LBServerSupport::getPreference("chathelpformat");
-		$cmdlist = LBServerSupport::getPreference("chathelpcmdlist" . ($client->getPrivilege() > 0 ? "mod" : ""));
+		$info = $this->server->getServerSupport()->getPreference("chathelp");
+		$format = $this->server->getServerSupport()->getPreference("chathelpformat");
+		$cmdlist = $this->server->getServerSupport()->getPreference("chathelpcmdlist" . ($client->getPrivilege() > 0 ? "mod" : ""));
 
 		$client->send("INFO HELP INFO $info\n");
 		$client->send("INFO HELP FORMAT $format\n");
@@ -45,7 +45,7 @@ class InfoCommand extends Command implements IServerCommand {
 
 	protected function sendColors(ChatClient $client) {
 		//Color list from the server
-		$colors = LBServerSupport::getColorList();
+		$colors = $this->server->getServerSupport()->getColorList();
 		foreach ($colors as $item) {
 			$ident = $item["ident"];
 			$color = $item["color"];
@@ -56,7 +56,7 @@ class InfoCommand extends Command implements IServerCommand {
 
 	protected function sendStatuses(ChatClient $client) {
 		//Status list also controlled by the server
-		$statuses = LBServerSupport::getStatusList();
+		$statuses = $this->server->getServerSupport()->getStatusList();
 		foreach ($statuses as $item) {
 			$status  = $item["status"];
 			$display = $item["display"];
