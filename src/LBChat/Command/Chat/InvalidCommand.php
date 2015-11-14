@@ -42,6 +42,10 @@ class InvalidCommand extends Command implements IChatCommand {
 		return new InvalidCommand($server, $client, "Invalid target. Could not find user \"{$user}\"");
 	}
 
+	public static function createAccessDenied(ChatServer $server, ChatClient $client, $message = "perform this action") {
+		return new InvalidCommand($server, $client, "Access Denied. You are not allowed to {$message}.");
+	}
+
 	public static function createGeneric(ChatServer $server, ChatClient $client, $message) {
 		return new InvalidCommand($server, $client, "Invalid command. {$message}");
 	}

@@ -35,7 +35,7 @@ class MuteAllCommand extends Command implements IChatCommand {
         /* @var ChatClient $client */
         foreach ($clients as $client) {
             // administrators and moderators aren't gonna get muted :)
-            if ($client->getPrivilege() == 0) {
+            if ($this->client->checkPrivilege($client->getPrivilege())) {
                 // you're a pleb and deserved to be muted
                 // add mute time to the client.
                 $client->addMuteTime($this->time);

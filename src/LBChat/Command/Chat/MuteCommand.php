@@ -59,6 +59,7 @@ class MuteCommand extends Command implements IChatCommand {
 			if ($recipient === null) {
 				return InvalidCommand::createUnknownUser($server, $client, $user);
 			}
+
 			$message = self::formatInfoMessage($recipient, false);
 			return new WhisperCommand($server, ServerChatClient::getClient(), array($client), $message);
 		case 2:
@@ -75,6 +76,12 @@ class MuteCommand extends Command implements IChatCommand {
 			//Could not find them?
 			if ($recipient === null) {
 				return InvalidCommand::createUnknownUser($server, $client, $user);
+			}
+
+			//Make sure we respect access levels
+			if (!$client->checkPrivilege($recipient->getPrivilege())) {
+				//You are not allowed to use this command
+				return InvalidCommand::createAccessDenied($server, $client, "mute users with a greater privilege level");
 			}
 
 			$time = (int)array_shift($words);

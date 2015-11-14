@@ -410,4 +410,13 @@ class ChatClient {
 			return array("username" => $friend, "display" => $friend);
 		}, $this->friends);
 	}
+
+	/**
+	 * Check if a client is allowed to perform an action based on privilege levels
+	 * @param int $level The command's privilege level
+	 * @return bool If the client can use this command
+	 */
+	public function checkPrivilege($level) {
+		return $this->getPrivilege() >= $level;
+	}
 }
