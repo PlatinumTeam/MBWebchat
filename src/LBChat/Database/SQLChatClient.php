@@ -20,17 +20,6 @@ class SQLChatClient extends ChatClient {
 		if (!parent::onLogin())
 			return false;
 
-		//Check if they need to accept the TOS
-		$query = $this->db("platinum")->prepare("SELECT `acceptedTos` FROM `users` WHERE `username` = :username");
-		$query->bindParam(":username", $this->getUsername());
-		$query->execute();
-		if (!$query->fetchColumn(0)) {
-			//They do need to accept the TOS
-			$command = new AcceptTOSCommand($this->server);
-			$command->execute($this);
-			return false;
-		}
-
 		$command = new InfoCommand($this->server);
 		$command->execute($this);
 
@@ -100,9 +89,18 @@ class SQLChatClient extends ChatClient {
 		$this->setUsername($this->support->getGuestUsername());
 	}
 
-	public function acceptTOS() {
-		$query = $this->db("platinum")->prepare("UPDATE `users` SET `acceptedTos` = 1 WHERE `username` = :username");
+	public function getAcceptedTOS() {
+		//Check if they need to accept the TOS
+		$query = $this->db("platinum")->prepare("SELECT `acceptedTos` FROM `users` WHERE `username` = :username");
 		$query->bindParam(":username", $this->getUsername());
+		$query->execute();
+		return !$query->fetchColumn(0);
+	}
+
+	public function setAcceptedTOS($accepted) {
+		$query = $this->db("platinum")->prepare("UPDATE `users` SET `acceptedTos` = :accepted WHERE `username` = :username");
+		$query->bindParam(":username", $this->getUsername());
+		$query->bindParam(":accepted", $accepted);
 		$query->execute();
 	}
 

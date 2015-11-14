@@ -1,6 +1,7 @@
 <?php
 namespace LBChat;
 use LBChat\Command\Chat\WhisperCommand;
+use LBChat\Command\Server\AcceptTOSCommand;
 use LBChat\Command\Server\IdentifyCommand;
 use LBChat\Command\Server\InvalidCommand;
 use LBChat\Command\Server\NotifyCommand;
@@ -30,6 +31,7 @@ class ChatClient {
 	protected $loggedIn;
 	protected $guest;
 	private $friends;
+	protected $acceptedTOS;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection, IUserSupport $support) {
 		$this->server = $server;
@@ -47,6 +49,7 @@ class ChatClient {
 		$this->loggedIn = false;
 		$this->guest = false;
 		$this->friends = array();
+		$this->acceptedTOS = false;
 	}
 
 	/**
@@ -91,6 +94,16 @@ class ChatClient {
 			$command->execute($this);
 			//Close our connection
 			$this->disconnect();
+			return false;
+		}
+
+		//Check if they need to accept the TOS
+		if (!$this->getAcceptedTOS()) {
+			//They do need to accept the TOS
+			$command = new AcceptTOSCommand($this->server);
+			$command->execute($this);
+
+			//Don't disconnect them, but don't let them in until they accept
 			return false;
 		}
 
@@ -354,10 +367,19 @@ class ChatClient {
 	}
 
 	/**
-	 * Mark this client as having accepted the TOS
+	 * Determine if the client has accepted the TOS
+	 * @return bool If the client accepted the TOS
 	 */
-	public function acceptTOS() {
-		//Base users don't have any way of handling this
+	public function getAcceptedTOS() {
+		return $this->acceptedTOS;
+	}
+
+	/**
+	 * Set if this client has accepted the TOS
+	 * @param bool $accepted If the client has accepted the TOS
+	 */
+	public function setAcceptedTOS($accepted) {
+		$this->acceptedTOS = $accepted;
 	}
 
 	/**
