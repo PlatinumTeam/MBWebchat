@@ -50,7 +50,7 @@ class JoomlaUserSupport implements IUserSupport {
 		if (array_key_exists($id, $this->userCache)) {
 			$cached = $this->userCache[$id];
 			//Cache timeout is stored in $cached[1]
-			if (microtime(true) - $cached[1] > self::cacheTime) {
+			if (microtime(true) - $cached[1] > $this->cacheTime) {
 				//Update the user
 				$user = \JFactory::getUser($id);
 				$this->userCache[$id] = array($user, microtime(true));
@@ -93,11 +93,11 @@ class JoomlaUserSupport implements IUserSupport {
 		if ($this->getId($username) === null && $this->backup !== null)
 			return $this->backup->getDisplayName($username);
 
-		return self::getUser(self::getId($username))->name;
+		return $this->getUser($this->getId($username))->name;
 	}
 
 	public function getColor($username) {
-		$id = self::getId($username);
+		$id = $this->getId($username);
 		$query = $this->database->prepare("SELECT `colorValue` FROM `bv2xj_users` WHERE `id` = :id");
 		$query->bindParam(":id", $id);
 		$query->execute();
@@ -105,18 +105,22 @@ class JoomlaUserSupport implements IUserSupport {
 	}
 
 	public function getTitles($username) {
-		$id = self::getId($username);
+		$id = $this->getId($username);
 		$query = $this->database->prepare(
-			"SELECT `title`, 'flair' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleFlair` FROM `bv2xj_users` WHERE `id` = :uid)
+			"SELECT `title`, 'flair' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleFlair` FROM `bv2xj_users` WHERE `id` = ?)
 				UNION
-			SELECT `title`, 'prefix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titlePrefix` FROM `bv2xj_users` WHERE `id` = :uid)
+            SELECT `title`, 'prefix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titlePrefix` FROM `bv2xj_users` WHERE `id` = ?)
 				UNION
-			SELECT `title`, 'suffix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleSuffix` FROM `bv2xj_users` WHERE `id` = :uid)");
-		$query->bindParam(":uid", $id);
+			SELECT `title`, 'suffix' FROM `bv2xj_user_titles` WHERE `id` = (SELECT `titleSuffix` FROM `bv2xj_users` WHERE `id` = ?)
+		");
+		$query->bindValue(1, $id);
+		$query->bindValue(2, $id);
+		$query->bindValue(3, $id);
 		$query->execute();
 
-		if (!$query->rowCount())
+		if (!$query->rowCount()) {
 			return array("", "", "");
+		}
 
 		$rows = $query->fetchAll();
 
