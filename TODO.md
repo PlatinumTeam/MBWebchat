@@ -10,7 +10,6 @@
 * Politics filter 
 * Banning 
 * Tracking 
-* Previous messages 
 * Ping timeouts 
 * Group commands
 	* /group create <name> 
