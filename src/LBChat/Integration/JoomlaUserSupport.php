@@ -50,7 +50,7 @@ class JoomlaUserSupport implements IUserSupport {
 		if (array_key_exists($id, $this->userCache)) {
 			$cached = $this->userCache[$id];
 			//Cache timeout is stored in $cached[1]
-			if (microtime(true) - $cached[1] > $this->cacheTime) {
+			if (microtime(true) - $cached[1] > self::cacheTime) {
 				//Update the user
 				$user = \JFactory::getUser($id);
 				$this->userCache[$id] = array($user, microtime(true));
