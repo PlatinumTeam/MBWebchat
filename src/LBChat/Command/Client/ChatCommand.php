@@ -6,6 +6,7 @@ use LBChat\ChatServer;
 use LBChat\Command\ChatCommandFactory;
 use LBChat\Command\CommandFactory;
 use LBChat\Command\Server;
+use LBChat\Filter\ProfanityFilter;
 use LBChat\Utils\String;
 
 class ChatCommand extends Command implements IClientCommand {
@@ -39,6 +40,11 @@ class ChatCommand extends Command implements IClientCommand {
 		$command = ChatCommandFactory::construct($server, $client, $message);
 		if ($command !== null) {
 			return $command;
+		}
+
+		//Filter any profanities in the message
+		if (!ProfanityFilter::filterMessage($server, $client, $message)) {
+			return null;
 		}
 
 		//No command, just send a basic chat message.
