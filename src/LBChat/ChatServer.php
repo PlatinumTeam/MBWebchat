@@ -253,4 +253,23 @@ class ChatServer implements MessageComponentInterface {
 	public function getUserSupport() {
 		return $this->userSupport;
 	}
+
+	/**
+	 * Callback method for when a client finishes logging in
+	 * @param ChatClient $client The client who is logging in
+	 * @return boolean If the client should be disconnected
+	 */
+	public function onClientLogin(ChatClient $client) {
+		$this->sendAllUserlists();
+		$this->broadcastCommand(new Server\NotifyCommand($this, $client, "login", -1, $client->getLocation()), $client);
+		return true;
+	}
+
+	/**
+	 * Callback method for when a client logs out.
+	 * @param ChatClient $client The client who is logging out
+	 */
+	public function onClientLogout(ChatClient $client) {
+
+	}
 }

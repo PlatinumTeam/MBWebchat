@@ -108,9 +108,6 @@ class ChatClient {
 		}
 
 		$this->loggedIn = true;
-
-		$this->server->sendAllUserlists();
-		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
 		return true;
 	}
 
@@ -344,8 +341,15 @@ class ChatClient {
 		if ($this->tryLogin($type, $data)) {
 			//Login succeeded
 			if ($this->onLogin()) {
-				$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_SUCCESS);
-				$command->execute($this);
+				if ($this->server->onClientLogin($this)) {
+					$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_SUCCESS);
+					$command->execute($this);
+				} else {
+					//Server rejected our login. Oh well
+					$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_INVAILD);
+					$command->execute($this);
+					$this->disconnect();
+				}
 			}
 		} else {
 			//Login failed
