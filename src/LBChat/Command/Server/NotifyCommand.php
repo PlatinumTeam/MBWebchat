@@ -21,10 +21,12 @@ class NotifyCommand extends Command implements IServerCommand {
 	}
 
 	public function execute(ChatClient $client) {
-		$username = String::encodeSpaces($this->sender->getUsername());
-		$display  = String::encodeSpaces($this->sender->getDisplayName());
+		//Only send to clients that are authorized
+		if ($client->getAccess() >= $this->access) {
+			$username = String::encodeSpaces($this->sender->getUsername());
+			$display  = String::encodeSpaces($this->sender->getDisplayName());
 
-		$client->send("NOTIFY $this->type $this->access $username $display $this->message");
-
+			$client->send("NOTIFY $this->type $this->access $username $display $this->message");
+		}
 	}
 }
