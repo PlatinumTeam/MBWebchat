@@ -12,15 +12,40 @@ class Database {
 	 */
 	protected $connection;
 
+	/**
+	 * @var string $host
+	 */
+	protected $host;
+
+	/**
+	 * @var string $username
+	 */
+	protected $username;
+
+	/**
+	 * @var string $name
+	 */
+	protected $name;
+
+	/**
+	 * @var string $schema
+	 */
+	protected $schema;
+
 	const EMULATION_MAXIMUM_VERSION = "5.1.17";
 
 	public function __construct($name) {
 		//Load the db config
 		require("../db.php");
 
+		$this->name = $name;
+		$this->schema = \MBDB::getDatabaseName($name);
+		$this->host = \MBDB::getDatabaseHost($name);
+		$this->username = \MBDB::getDatabaseUser($name);
+
 		try {
-			$dsn = "mysql:dbname=" . \MBDB::getDatabaseName($name) . ";host=" . \MBDB::getDatabaseHost($name);
-			$this->connection = new \PDO($dsn, \MBDB::getDatabaseUser($name), \MBDB::getDatabasePass($name));
+			$dsn = "mysql:dbname=" . $this->schema . ";host=" . $this->host;
+			$this->connection = new \PDO($dsn, $this->username, \MBDB::getDatabasePass($name));
 
 			//Set queries to emulate if under MySQL 5.1.17 for performance reasons.
 			// Via http://stackoverflow.com/a/10455228/214063
@@ -41,5 +66,37 @@ class Database {
 	 */
 	public function prepare($query) {
 		return $this->connection->prepare($query);
+	}
+
+	/**
+	 * Get the database's username
+	 * @return string The database's username
+	 */
+	public function getUsername() {
+		return $this->username;
+	}
+
+	/**
+	 * Get the database's name
+	 * @return string The database's name
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * Get the database's schema
+	 * @return string The database's schema
+	 */
+	public function getSchema() {
+		return $this->schema;
+	}
+
+	/**
+	 * Get the database's host
+	 * @return string The database's host
+	 */
+	public function getHost() {
+		return $this->host;
 	}
 }
