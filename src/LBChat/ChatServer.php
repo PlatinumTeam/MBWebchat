@@ -22,6 +22,8 @@ class ChatServer implements MessageComponentInterface {
 	protected $serverSupport;
 	protected $userSupport;
 
+	protected $kickedClients;
+
 	/**
 	 * @var LoopInterface $scheduler
 	 */
@@ -33,6 +35,8 @@ class ChatServer implements MessageComponentInterface {
 
 		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
+
+		$this->kickedClients = array();
 
 		ServerChatClient::create($this);
 		$this->connections->attach(ServerChatClient::getConnection(), ServerChatClient::getClient());
@@ -260,6 +264,12 @@ class ChatServer implements MessageComponentInterface {
 	 * @return boolean If the client should be disconnected
 	 */
 	public function onClientLogin(ChatClient $client) {
+		//Check if we've kicked this client and they're not allowed in
+		if (in_array($client->getUsername(), $this->kickedClients)) {
+			//They're kicked
+			return false;
+		}
+
 		$this->sendAllUserlists();
 		$this->broadcastCommand(new Server\NotifyCommand($this, $client, "login", -1, $client->getLocation()), $client);
 		return true;
@@ -271,5 +281,22 @@ class ChatServer implements MessageComponentInterface {
 	 */
 	public function onClientLogout(ChatClient $client) {
 
+	}
+
+	/**
+	 * Disconnect a client from the server for a given length of time
+	 * @param ChatClient $client The client to kick
+	 * @param int        $time For how long the client is kicked
+	 */
+	public function kickClient(ChatClient $client, $time) {
+		$username = $client->getUsername();
+		$this->kickedClients[] = $username;
+		$this->schedule($time, function() use($username) {
+			//Find the position of the username
+			$position = array_search($username, $this->kickedClients);
+			//Splice the object out from the middle of the array
+			array_splice($this->kickedClients, $position, 1);
+		});
+		$client->disconnect();
 	}
 }

@@ -38,7 +38,7 @@ _addCommands(
 		array("/unmute",  "LBChat\\Command\\Chat\\UnmuteCommand",  1, false),
 		array("/stop",    "LBChat\\Command\\Chat\\StopCommand",    2, false),
 		array("/ping",    "LBChat\\Command\\Chat\\PingCommand",    0, false),
-
+		array("/kick",    "LBChat\\Command\\Chat\\KickCommand",    1, false),
 
 		//Keep this line at the bottom to catch all invalid commands. No /command will work if it comes after this line.
 		array("/",        "LBChat\\Command\\Chat\\InvalidCommand", 0, false)
