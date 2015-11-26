@@ -6,7 +6,6 @@
 * Sending messages to offline users 
 * Caps filter 
 * Politics filter 
-* Banning 
 * Tracking 
 * Ping timeouts 
 * Group commands
