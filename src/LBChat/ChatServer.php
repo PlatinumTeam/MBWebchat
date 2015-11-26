@@ -23,6 +23,7 @@ class ChatServer implements MessageComponentInterface {
 	protected $userSupport;
 
 	protected $kickedClients;
+	protected $bannedClients;
 
 	/**
 	 * @var LoopInterface $scheduler
@@ -37,6 +38,7 @@ class ChatServer implements MessageComponentInterface {
 		$this->clients = new \SplObjectStorage();
 
 		$this->kickedClients = array();
+		$this->bannedClients = array();
 
 		ServerChatClient::create($this);
 		$this->connections->attach(ServerChatClient::getConnection(), ServerChatClient::getClient());
@@ -270,6 +272,13 @@ class ChatServer implements MessageComponentInterface {
 			return false;
 		}
 
+		//Check if this client is banned
+		if (in_array($client->getUsername(), $this->bannedClients)) {
+			//They're banned
+			//TODO: Shadowbanning
+			return false;
+		}
+
 		$this->sendAllUserlists();
 		$this->broadcastCommand(new Server\NotifyCommand($this, $client, "login", -1, $client->getLocation()), $client);
 		return true;
@@ -297,6 +306,28 @@ class ChatServer implements MessageComponentInterface {
 			//Splice the object out from the middle of the array
 			array_splice($this->kickedClients, $position, 1);
 		});
+		$client->disconnect();
+	}
+
+	/**
+	 * Ban a client, preventing them from joining for a number of days
+	 * @param ChatClient $client The client to ban
+	 * @param int        $days   How many days they are banned for, or -1 if indefinite
+	 */
+	public function banClient(ChatClient $client, $days) {
+		//TODO: Shadowbanning
+		$username = $client->getUsername();
+		$this->bannedClients[] = $username;
+
+		//If their ban isn't indefinite
+		if ($days > 0) {
+			$this->schedule($days * 86400, function () use ($username) {
+				//Find the position of the username
+				$position = array_search($username, $this->bannedClients);
+				//Splice the object out from the middle of the array
+				array_splice($this->bannedClients, $position, 1);
+			});
+		}
 		$client->disconnect();
 	}
 

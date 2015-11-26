@@ -160,4 +160,16 @@ class SQLChatServer extends ChatServer {
 		return true;
 	}
 
+	/**
+	 * Ban a client, preventing them from joining for a number of days
+	 * @param ChatClient $client The client to ban
+	 * @param int        $days   How many days they are banned for, or -1 if indefinite
+	 */
+	public function banClient(ChatClient $client, $days) {
+		//Submit this to the server
+		$query = $this->db("platinum")->prepare("UPDATE `users` SET `access` = -3, `banned` = 1 WHERE `username` = :username");
+		$query->bindParam(":username", $client->getUsername());
+		$query->execute();
+		$client->disconnect();
+	}
 }
