@@ -1,8 +1,6 @@
 ## Todo on Webchat (in no particular order):
 
 * SQL-based kicks 
-* Read notifications from SQL 
-* Version checking 
 * IP Banning 
 * Block lists 
 * Sending messages to offline users 
