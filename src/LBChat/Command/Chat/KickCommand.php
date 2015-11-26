@@ -10,7 +10,7 @@ class KickCommand extends Command implements IChatCommand {
 	/**
 	 * @var ChatClient $recipient
 	 */
-	protected $recipiient;
+	protected $recipient;
 
 	/**
 	 * @var int $time
@@ -20,7 +20,7 @@ class KickCommand extends Command implements IChatCommand {
 	public function __construct(ChatServer $server, ChatClient $client, ChatClient $recipient, $time) {
 		parent::__construct($server, $client);
 
-		$this->recipiient = $recipient;
+		$this->recipient = $recipient;
 		$this->time = $time;
 	}
 
