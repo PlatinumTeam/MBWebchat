@@ -67,4 +67,17 @@ class LBServerSupport implements IServerSupport {
 
 		return $message;
 	}
+
+	/**
+	 * Check if a given version is allowed to join the server
+	 * @param int $version The version number
+	 * @return boolean If a client using that version can join
+	 */
+	public function checkVersion($version) {
+		$query = $this->database->prepare("SELECT `version` FROM `versions` ORDER BY `id` DESC LIMIT 1");
+		$query->execute();
+
+		$serverVersion = $query->fetchColumn(0);
+		return ($version >= $serverVersion);
+	}
 }

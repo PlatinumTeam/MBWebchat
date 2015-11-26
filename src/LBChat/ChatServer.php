@@ -299,4 +299,13 @@ class ChatServer implements MessageComponentInterface {
 		});
 		$client->disconnect();
 	}
+
+	/**
+	 * Check if a given version is allowed to join the server
+	 * @param int $version The version number
+	 * @return boolean If a client using that version can join
+	 */
+	public function checkVersion($version) {
+		return $this->serverSupport->checkVersion($version);
+	}
 }

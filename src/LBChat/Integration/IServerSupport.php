@@ -34,4 +34,11 @@ interface IServerSupport {
 	 * @return string The welcome message
 	 */
 	public function getWelcomeMessage($webchat = false);
+
+	/**
+	 * Check if a given version is allowed to join the server
+	 * @param int $version The version number
+	 * @return boolean If a client using that version can join
+	 */
+	public function checkVersion($version);
 }
