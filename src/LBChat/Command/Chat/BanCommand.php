@@ -3,6 +3,7 @@ namespace LBChat\Command\Chat;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
+use LBChat\Misc\DummyChatClient;
 use LBChat\Utils\String;
 
 class BanCommand extends Command implements IChatCommand {
@@ -40,6 +41,16 @@ class BanCommand extends Command implements IChatCommand {
 
 		$user = array_shift($words);
 		$recipient = $server->findClient($user);
+
+		//If they're not online, make a dummy and ban them
+		if ($recipient === null) {
+			$recipient = new DummyChatClient($server, $user, 0);
+		}
+
+		//Can't ban people with more power than you
+		if (!$client->checkPrivilege($recipient->getPrivilege())) {
+			return InvalidCommand::createAccessDenied($server, $client, "ban users with greater access");
+		}
 
 		$days = -1; //Infinite
 		if (count($words) > 0) {

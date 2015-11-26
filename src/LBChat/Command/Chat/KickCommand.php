@@ -28,7 +28,7 @@ class KickCommand extends Command implements IChatCommand {
 	 * Execute the given client command, applying any changes that it represents.
 	 */
 	public function execute() {
-		$this->server->kickClient($this->recipiient, $this->time);
+		$this->server->kickClient($this->recipient, $this->time);
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
@@ -40,6 +40,16 @@ class KickCommand extends Command implements IChatCommand {
 
 		$user = array_shift($words);
 		$recipient = $server->findClient($user);
+
+		//Can't kick people who aren't online
+		if ($recipient === null) {
+			return InvalidCommand::createUnknownUser($server, $client, $user);
+		}
+
+		//Can't kick people with more power than you
+		if (!$client->checkPrivilege($recipient->getPrivilege())) {
+			return InvalidCommand::createAccessDenied($server, $client, "kick users with greater access");
+		}
 
 		$time = 60;
 		if (count($words) > 0) {
