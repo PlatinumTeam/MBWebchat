@@ -36,6 +36,13 @@ interface IServerSupport {
 	public function getWelcomeMessage($webchat = false);
 
 	/**
+	 * Update the server's quote of the day
+	 * @param string $sender The user who sent the qotd
+	 * @param string $message The new qotd to use
+	 */
+	public function setQotd($sender, $message);
+
+	/**
 	 * Check if a given version is allowed to join the server
 	 * @param int $version The version number
 	 * @return boolean If a client using that version can join

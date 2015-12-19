@@ -80,4 +80,16 @@ class LBServerSupport implements IServerSupport {
 		$serverVersion = $query->fetchColumn(0);
 		return ($version >= $serverVersion);
 	}
+
+	public function setQotd($sender, $message) {
+		//HiGuy: Deactivate the old qotd
+		$query = $this->database->prepare("UPDATE `qotd` SET `selected` = 0");
+		$query->execute();
+
+		//HiGuy: Add the new qotd
+		$query = $this->database->prepare("INSERT INTO `qotd` (`text`, `username`, `selected`) VALUES (:text, :username, 1)");
+		$query->bindParam(":text", $message);
+		$query->bindParam(":username", $sender);
+		$query->execute();
+	}
 }

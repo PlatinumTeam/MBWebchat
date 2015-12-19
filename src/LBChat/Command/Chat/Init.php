@@ -41,6 +41,7 @@ _addCommands(
 		array("/kick",    "LBChat\\Command\\Chat\\KickCommand",    1, false),
 		array("/ban" ,    "LBChat\\Command\\Chat\\BanCommand",     1, false),
 	    array("/ip",      "LBChat\\Command\\Chat\\IPCommand",      0, false),
+	    array("/qotd",    "LBChat\\Command\\Chat\\QotdCommand",    1, false),
 
 		//Keep this line at the bottom to catch all invalid commands. No /command will work if it comes after this line.
 		array("/",        "LBChat\\Command\\Chat\\InvalidCommand", 0, false)
