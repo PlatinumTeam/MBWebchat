@@ -35,12 +35,19 @@ class InfoCommand extends Command implements IServerCommand {
 
 	protected function sendHelp(ChatClient $client) {
 		$info = $this->server->getServerSupport()->getPreference("chathelp");
-		$format = $this->server->getServerSupport()->getPreference("chathelpformat");
-		$cmdlist = $this->server->getServerSupport()->getPreference("chathelpcmdlist" . ($client->getPrivilege() > 0 ? "mod" : ""));
-
 		$client->send("INFO HELP INFO $info\n");
-		$client->send("INFO HELP FORMAT $format\n");
-		$client->send("INFO HELP CMDLIST $cmdlist\n");
+
+		//Moderators and admins get extra help pages
+		if ($client->getPrivilege() > 0) {
+			$format = $this->server->getServerSupport()->getPreference("chathelpformat");
+			$cmdlist = $this->server->getServerSupport()->getPreference("chathelpcmdlistmod");
+			$client->send("INFO HELP FORMAT $format\n");
+			$client->send("INFO HELP CMDLIST $cmdlist\n");
+		} else {
+			//No formatting for regular users
+			$cmdlist = $this->server->getServerSupport()->getPreference("chathelpcmdlist");
+			$client->send("INFO HELP CMDLIST $cmdlist\n");
+		}
 	}
 
 	protected function sendColors(ChatClient $client) {
