@@ -7,6 +7,7 @@ use LBChat\Command\Server\AcceptTOSCommand;
 use LBChat\Command\Server\IdentifyCommand;
 use LBChat\Command\Server\InvalidCommand;
 use LBChat\Command\Server\NotifyCommand;
+use LBChat\Filter\CapsFilter;
 use LBChat\Filter\FilterGroup;
 use LBChat\Filter\ChatFilter;
 use LBChat\Filter\ProfanityFilter;
@@ -120,13 +121,16 @@ class ChatClient {
 		$privilege = $this->getPrivilege();
 		switch ($privilege) {
 		case 0:
-			$this->setChatFilter(new FilterGroup($this->server, $this, array(new ProfanityFilter($this->server, $this))));
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new CapsFilter($this->server, $this),
+			                                                                 new ProfanityFilter($this->server, $this))));
 			break;
 		case 1:
-			$this->setChatFilter(new FilterGroup($this->server, $this, array(new ProfanityFilter($this->server, $this))));
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new CapsFilter($this->server, $this),
+			                                                                 new ProfanityFilter($this->server, $this))));
 			break;
 		case 2:
-			$this->setChatFilter(new FilterGroup($this->server, $this, array(new ProfanityFilter($this->server, $this))));
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new CapsFilter($this->server, $this),
+			                                                                 new ProfanityFilter($this->server, $this))));
 			break;
 		}
 
