@@ -1,16 +1,16 @@
 ## Todo on Webchat (in no particular order):
 
 * SQL-based kicks 
-* Read notifications from SQL 
-* Version checking 
 * IP Banning 
 * Block lists 
 * Sending messages to offline users 
 * Caps filter 
 * Politics filter 
-* Banning 
 * Tracking 
-* Ping timeouts 
+* Ping timeouts
+* ACLS:
+	* Send notifications only to users in ACL (like invisible notifs)
+* Fix invisibility (normal users can use it, it doesn't make you actually invisible)
 * Group commands
 	* /group create <name> 
 	* /group invite <name> 

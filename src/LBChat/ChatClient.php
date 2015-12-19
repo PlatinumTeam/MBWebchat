@@ -1,5 +1,7 @@
 <?php
 namespace LBChat;
+use Guzzle\Http\Message\EntityEnclosingRequest;
+use Guzzle\Http\Message\Header;
 use LBChat\Command\Chat\WhisperCommand;
 use LBChat\Command\Server\AcceptTOSCommand;
 use LBChat\Command\Server\IdentifyCommand;
@@ -8,6 +10,9 @@ use LBChat\Command\Server\NotifyCommand;
 use LBChat\Integration\IUserSupport;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
+use Ratchet\Server\IoConnection;
+use Ratchet\WebSocket\Version\Hixie76;
+use Ratchet\WebSocket\Version\RFC6455;
 use React\Socket\Connection;
 
 /**
@@ -160,6 +165,24 @@ class ChatClient {
 	 * @return string The client's IP address
 	 */
 	public function getAddress() {
+		//Check if we're proxying through stunnel.
+		if ($this->connection->remoteAddress === "127.0.0.1") {
+			if ($this->connection instanceof RFC6455\Connection || $this->connection instanceof Hixie76\Connection) {
+				/* @var RFC6455\Connection|Hixie76\Connection $this ->connection */
+				$request = $this->connection->WebSocket->request;
+				/* @var EntityEnclosingRequest $request */
+				if ($request->hasHeader("X-Forwarded-For")) {
+					//It's a forwarded connection
+					/* @var Header $header */
+					$header = $request->getHeader("X-Forwarded-For");
+
+					//Make sure it exists
+					if ($header->count() > 0) {
+						return $header->toArray()[0];
+					}
+				}
+			}
+		}
 		return $this->connection->remoteAddress;
 	}
 

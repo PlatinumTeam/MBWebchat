@@ -22,6 +22,9 @@ class ChatServer implements MessageComponentInterface {
 	protected $serverSupport;
 	protected $userSupport;
 
+	protected $kickedClients;
+	protected $bannedClients;
+
 	/**
 	 * @var LoopInterface $scheduler
 	 */
@@ -33,6 +36,9 @@ class ChatServer implements MessageComponentInterface {
 
 		$this->connections = new \SplObjectStorage();
 		$this->clients = new \SplObjectStorage();
+
+		$this->kickedClients = array();
+		$this->bannedClients = array();
 
 		ServerChatClient::create($this);
 		$this->connections->attach(ServerChatClient::getConnection(), ServerChatClient::getClient());
@@ -260,6 +266,19 @@ class ChatServer implements MessageComponentInterface {
 	 * @return boolean If the client should be disconnected
 	 */
 	public function onClientLogin(ChatClient $client) {
+		//Check if we've kicked this client and they're not allowed in
+		if (in_array($client->getUsername(), $this->kickedClients)) {
+			//They're kicked
+			return false;
+		}
+
+		//Check if this client is banned
+		if (in_array($client->getUsername(), $this->bannedClients)) {
+			//They're banned
+			//TODO: Shadowbanning
+			return false;
+		}
+
 		$this->sendAllUserlists();
 		$this->broadcastCommand(new Server\NotifyCommand($this, $client, "login", -1, $client->getLocation()), $client);
 		return true;
@@ -271,5 +290,53 @@ class ChatServer implements MessageComponentInterface {
 	 */
 	public function onClientLogout(ChatClient $client) {
 
+	}
+
+	/**
+	 * Disconnect a client from the server for a given length of time
+	 * @param ChatClient $client The client to kick
+	 * @param int        $time For how long the client is kicked
+	 */
+	public function kickClient(ChatClient $client, $time) {
+		$username = $client->getUsername();
+		$this->kickedClients[] = $username;
+		$this->schedule($time, function() use($username) {
+			//Find the position of the username
+			$position = array_search($username, $this->kickedClients);
+			//Splice the object out from the middle of the array
+			array_splice($this->kickedClients, $position, 1);
+		});
+		$client->disconnect();
+	}
+
+	/**
+	 * Ban a client, preventing them from joining for a number of days
+	 * @param ChatClient $client The client to ban
+	 * @param int        $days   How many days they are banned for, or -1 if indefinite
+	 */
+	public function banClient(ChatClient $client, $days) {
+		//TODO: Shadowbanning
+		$username = $client->getUsername();
+		$this->bannedClients[] = $username;
+
+		//If their ban isn't indefinite
+		if ($days > 0) {
+			$this->schedule($days * 86400, function () use ($username) {
+				//Find the position of the username
+				$position = array_search($username, $this->bannedClients);
+				//Splice the object out from the middle of the array
+				array_splice($this->bannedClients, $position, 1);
+			});
+		}
+		$client->disconnect();
+	}
+
+	/**
+	 * Check if a given version is allowed to join the server
+	 * @param int $version The version number
+	 * @return boolean If a client using that version can join
+	 */
+	public function checkVersion($version) {
+		return $this->serverSupport->checkVersion($version);
 	}
 }

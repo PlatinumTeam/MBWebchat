@@ -71,6 +71,9 @@ class JoomlaUserSupport implements IUserSupport {
 		if (!array_key_exists($username, $this->idCache)) {
 			$this->idCache[$username] = \JUserHelper::getUserId($username);
 		}
+		//They have no id. They're probably a guest.
+		if ($this->idCache[$username] === null)
+			return null;
 		return $this->idCache[$username];
 	}
 
@@ -234,6 +237,10 @@ class JoomlaUserSupport implements IUserSupport {
 		//The backup takes priority here because we have either/or
 		if ($this->backup !== null && $this->backup->isBanned($username, $address))
 			return true;
+
+		//Guests don't have usernames, and can't be username-banned
+		if ($username === "")
+			return false;
 
 		$user = $this->getUser($this->getId($username));
 		if ($user !== null) {

@@ -9,15 +9,37 @@ class LBUserSupport implements IUserSupport {
 	 */
 	protected $database;
 
+	/**
+	 * @var array $userCache
+	 */
+	protected $userCache;
+
 	public function __construct(Database $database) {
 		$this->database = $database;
+		$this->userCache = [];
 	}
 
 	public function getUsername($username) {
+		//Workaround: Guests are never in the user database
+		if ($username === "Guest")
+			return $username;
+
+		//Check the cache, don't go through the DB if we don't have to
+		if (array_key_exists($username, $this->userCache)) {
+			return $this->userCache[$username];
+		}
+
 		$query = $this->database->prepare("SELECT `username` FROM `users` WHERE `username` = :username");
 		$query->bindParam(":username", $username);
 		$query->execute();
-		return $query->fetchColumn(0);
+
+		//This person has no username. Strange
+		if ($query->rowCount() === 0)
+			return $username;
+
+		//Cache their username
+		$this->userCache[$username] = $query->fetchColumn(0);
+		return $this->userCache[$username];
 	}
 
 	public function getAccess($username) {
@@ -118,6 +140,10 @@ class LBUserSupport implements IUserSupport {
 			//Wow, someone actually got IP-banned. What are the chances.
 			return true;
 		}
+
+		//Guests don't have usernames, and can't be username-banned
+		if ($username === "")
+			return false;
 
 		//Check for username bans
 		$query = $this->database->prepare("SELECT `banned` FROM `users` WHERE `username` = :username");

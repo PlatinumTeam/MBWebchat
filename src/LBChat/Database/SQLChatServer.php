@@ -4,6 +4,7 @@ namespace LBChat\Database;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Command\Server\ChatCommand;
+use LBChat\Command\Server\NotifyCommand;
 use LBChat\Integration\IServerSupport;
 use LBChat\Integration\IUserSupport;
 use LBChat\Misc\DummyChatClient;
@@ -22,6 +23,11 @@ class SQLChatServer extends ChatServer {
 	protected $databases;
 
 	/**
+	 * @var int $lastNotificationId
+	 */
+	protected $lastNotificationId;
+
+	/**
 	 * @param array $databases
 	 * @param IUserSupport $support
 	 */
@@ -38,6 +44,10 @@ class SQLChatServer extends ChatServer {
 		//Keep-alive loop so we don't drop any connections
 		$this->scheduleLoop(60, function() {
 			$this->keepAlive();
+		});
+		//Check for new notifications every second in the database
+		$this->scheduleLoop(1, function() {
+			$this->checkNotifications();
 		});
 	}
 
@@ -58,6 +68,8 @@ class SQLChatServer extends ChatServer {
 	protected function initDatabase() {
 		$this->db("platinum")->prepare("TRUNCATE TABLE `loggedin`")->execute();
 		$this->db("platinum")->prepare("TRUNCATE TABLE `jloggedin`")->execute();
+
+		$this->updateNotificationId();
 	}
 
 	/**
@@ -78,6 +90,43 @@ class SQLChatServer extends ChatServer {
 
 			}
 		}
+	}
+
+	protected function checkNotifications() {
+		//Query the database for any previous notifications
+		$query = $this->db("platinum")->prepare("SELECT * FROM `notify` WHERE `id` >= :id");
+		$query->bindParam(":id", $this->lastNotificationId);
+		$query->execute();
+
+		//Run through all rows and make notifications for them
+		$rows = $query->fetchAll(\PDO::FETCH_ASSOC);
+		foreach ($rows as $row) {
+			/* @var array $row */
+			$username = $row["username"];
+			$type = $row["type"];
+			$access = $row["access"];
+			$message = $row["message"];
+
+			//Find the client, or make a dummy one if they're not online
+			$client = $this->findClient($username);
+			if ($client === null) {
+				$client = new DummyChatClient($this, $username, 0);
+			}
+
+			//Send a notification to everyone
+			$command = new NotifyCommand($this, $client, $type, $access, $message);
+			$this->broadcastCommand($command);
+		}
+
+		$this->updateNotificationId();
+	}
+
+	protected function updateNotificationId() {
+		//Get the last row in the notification table
+		$query = $this->db("platinum")->prepare("SELECT `AUTO_INCREMENT` FROM `information_schema`.`TABLES` WHERE `TABLE_SCHEMA` = :schema AND `TABLE_NAME` = 'notify' LIMIT 1");
+		$query->bindParam(":schema", $this->db("platinum")->getSchema());
+		$query->execute();
+		$this->lastNotificationId = $query->fetchColumn(0);
 	}
 
 	/**
@@ -111,4 +160,16 @@ class SQLChatServer extends ChatServer {
 		return true;
 	}
 
+	/**
+	 * Ban a client, preventing them from joining for a number of days
+	 * @param ChatClient $client The client to ban
+	 * @param int        $days   How many days they are banned for, or -1 if indefinite
+	 */
+	public function banClient(ChatClient $client, $days) {
+		//Submit this to the server
+		$query = $this->db("platinum")->prepare("UPDATE `users` SET `access` = -3, `banned` = 1 WHERE `username` = :username");
+		$query->bindParam(":username", $client->getUsername());
+		$query->execute();
+		$client->disconnect();
+	}
 }
