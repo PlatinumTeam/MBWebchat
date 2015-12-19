@@ -7,8 +7,6 @@ use LBChat\Utils\String;
 
 class CapsFilter extends ChatFilter {
 	/**
-	 * @param ChatServer $server The chat server
-	 * @param ChatClient $client The client who sent the message
 	 * @param string $message The message to filter
 	 * @return boolean If the message should be shown
 	 */
