@@ -116,11 +116,20 @@ class ChatServer implements MessageComponentInterface {
 	}
 
 	/**
+	 * Create a chat client, can be overridden by subclasses to make special clients
+	 * @param ConnectionInterface $conn The connection interface for this client
+	 * @return ChatClient
+	 */
+	protected function createClient(ConnectionInterface $conn) {
+		return new ChatClient($this, $conn, $this->getUserSupport());
+	}
+
+	/**
 	 * When a client connects, this method adds them to the internal clients list
 	 * @param ConnectionInterface $conn
 	 */
 	protected function addClient(ConnectionInterface $conn) {
-		$client = new ChatClient($this, $conn, $this->getUserSupport());
+		$client = $this->createClient($conn);
 		$this->connections->attach($conn, $client);
 		$this->clients->attach($client);
 	}
