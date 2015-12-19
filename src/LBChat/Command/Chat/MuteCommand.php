@@ -41,6 +41,11 @@ class MuteCommand extends Command implements IChatCommand {
 
 		// Add time on the recipient so that they can get the punishment that they deserve.
 		$this->recipient->addMuteTime($this->time);
+
+		// Message the administrator or moderator that the mute has successfully gone through.
+		$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), array($this->client),
+			"You have successfully muted " . $this->recipient->getDisplayName() . ".");
+		$chat->execute();
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
