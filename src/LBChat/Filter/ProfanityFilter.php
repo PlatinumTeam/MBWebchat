@@ -5,7 +5,7 @@ use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Utils\String;
 
-abstract class ProfanityFilter implements IChatFilter {
+class ProfanityFilter extends ChatFilter {
 	//TODO: Make this list on SQL
 	static $profanities = array(
 		//    pattern/text to search   curse weight   text|regex|case    block entire msg  remove/replace it  what to replace with
@@ -21,7 +21,7 @@ abstract class ProfanityFilter implements IChatFilter {
 	 * @param string     $message The message to filter
 	 * @return boolean If the message should be shown
 	 */
-	public static function filterMessage(ChatServer $server, ChatClient $client, &$message) {
+	public function filterMessage(&$message) {
 		$words = String::getWordOptions($message);
 		foreach ($words as &$word) {
 			/* @var string $word */

@@ -43,7 +43,7 @@ class ChatCommand extends Command implements IClientCommand {
 		}
 
 		//Filter any profanities in the message
-		if (!ProfanityFilter::filterMessage($server, $client, $message)) {
+		if (!$client->getChatFilter()->filterMessage($message)) {
 			return null;
 		}
 

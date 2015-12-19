@@ -4,12 +4,18 @@ namespace LBChat\Filter;
 use LBChat\ChatClient;
 use LBChat\ChatServer;
 
-interface IChatFilter {
+abstract class ChatFilter {
+	protected $server;
+	protected $client;
+
+	public function __construct(ChatServer $server, ChatClient $client) {
+		$this->server = $server;
+		$this->client = $client;
+	}
+
 	/**
-	 * @param ChatServer $server The chat server
-	 * @param ChatClient $client The client who sent the message
 	 * @param string $message The message to filter
 	 * @return boolean If the message should be shown
 	 */
-	public static function filterMessage(ChatServer $server, ChatClient $client, &$message);
+	public abstract function filterMessage(&$message);
 }
