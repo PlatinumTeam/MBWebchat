@@ -19,9 +19,13 @@ class CapsFilter extends ChatFilter {
 		// check to see if at least 50% of the message was caps.
 		// if it was, replace the entire message with lowercase letters!
 		$half = (int)floor(strlen($filteredMessage) / 2);
-		if (preg_match_all("/(?<!\\w)\\w/", $filteredMessage, $matches) >= $half) {
+		if (preg_match_all("/[A-Z]/", $filteredMessage, $matches) >= $half) {
 			// lowercase the actual message
-			preg_replace("/(?<!\\w)\\w/", "?<=\\w)\\w", $message);
+
+			//Replace all letters that have a letter before them (in groups), use a callback function to lowercase
+			$message = preg_replace_callback("/((?<=\\w)\\w+)/", function($matches) {
+				return strtolower($matches[1]);
+			}, $message);
 		}
 
 		return true;
