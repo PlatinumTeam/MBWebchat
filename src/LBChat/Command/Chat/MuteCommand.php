@@ -31,12 +31,12 @@ class MuteCommand extends Command implements IChatCommand {
 			return;
 		}
 
-		// If the person isn't muted yet, we will embarrass them by display they have been muted.
+		// If the person isn't muted yet, message them privately so we don't have a bunch of folks
+		// bitch about why someone was muted. Don't make it public knowledge.
 		if (!$this->recipient->isMuted()) {
-			$message = "[col:1][b]" . $this->recipient->getDisplayName() . " has been muted by " .
-			           $this->client->getDisplayName() . ".";
-			$chat    = new ChatCommand($this->server, ServerChatClient::getClient(), null, $message);
-			$this->server->broadcastCommand($chat);
+			$chat = new WhisperCommand($this->server, ServerChatClient::getClient(), array($this->recipient),
+				"You have been muted for spam/offensive chat.");
+			$chat->execute();
 		}
 
 		// Add time on the recipient so that they can get the punishment that they deserve.
