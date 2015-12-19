@@ -7,7 +7,10 @@
 * Caps filter 
 * Politics filter 
 * Tracking 
-* Ping timeouts 
+* Ping timeouts
+* ACLS:
+	* Send notifications only to users in ACL (like invisible notifs)
+* Fix invisibility (normal users can use it, it doesn't make you actually invisible)
 * Group commands
 	* /group create <name> 
 	* /group invite <name> 
