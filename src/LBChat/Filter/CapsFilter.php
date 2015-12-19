@@ -5,14 +5,14 @@ use LBChat\ChatClient;
 use LBChat\ChatServer;
 use LBChat\Utils\String;
 
-class CapsFilter implements IChatFilter {
+class CapsFilter extends ChatFilter {
 	/**
 	 * @param ChatServer $server The chat server
 	 * @param ChatClient $client The client who sent the message
 	 * @param string $message The message to filter
 	 * @return boolean If the message should be shown
 	 */
-	public static function filterMessage(ChatServer $server, ChatClient $client, &$message) {
+	public function filterMessage(&$message) {
 		// first things first. strip formatting
 		$filteredMessage = String::stripFormatting($message);
 
