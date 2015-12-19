@@ -7,7 +7,9 @@ use LBChat\Command\Server\AcceptTOSCommand;
 use LBChat\Command\Server\IdentifyCommand;
 use LBChat\Command\Server\InvalidCommand;
 use LBChat\Command\Server\NotifyCommand;
+use LBChat\Filter\FilterGroup;
 use LBChat\Filter\ChatFilter;
+use LBChat\Filter\ProfanityFilter;
 use LBChat\Integration\IUserSupport;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
@@ -113,6 +115,19 @@ class ChatClient {
 
 			//Don't disconnect them, but don't let them in until they accept
 			return false;
+		}
+
+		$privilege = $this->getPrivilege();
+		switch ($privilege) {
+		case 0:
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new ProfanityFilter($this->server, $this))));
+			break;
+		case 1:
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new ProfanityFilter($this->server, $this))));
+			break;
+		case 2:
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new ProfanityFilter($this->server, $this))));
+			break;
 		}
 
 		$this->loggedIn = true;
