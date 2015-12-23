@@ -1,7 +1,7 @@
 <?php
 namespace LBChat\Misc;
 
-use Ratchet\ConnectionInterface;
+use Ratchet\AbstractConnectionDecorator;
 
 /**
  * Class PlainConnection
@@ -9,22 +9,7 @@ use Ratchet\ConnectionInterface;
  * plaintext connections can parse data.
  * @package LBChat\Misc
  */
-class PlainConnection implements ConnectionInterface {
-
-	/**
-	 * @var ConnectionInterface $interface
-	 */
-	protected $interface;
-
-	public $resourceId;
-
-	/**
-	 * @param ConnectionInterface $interface
-	 */
-	public function __construct(ConnectionInterface $interface) {
-		$this->interface = $interface;
-		$this->resourceId = "dup {$interface->resourceId}";
-	}
+class PlainConnection extends AbstractConnectionDecorator {
 
 	/**
 	 * Send data to the connection
@@ -34,13 +19,13 @@ class PlainConnection implements ConnectionInterface {
 	 * @return \Ratchet\ConnectionInterface
 	 */
 	function send($data) {
-		$this->interface->send($data . "\n");
+		$this->getConnection()->send($data . "\n");
 	}
 
 	/**
 	 * Close the connection
 	 */
 	function close() {
-		$this->interface->close();
+		$this->getConnection()->close();
 	}
 }

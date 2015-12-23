@@ -3,7 +3,7 @@ namespace LBChat\Command\Client;
 
 use LBChat\ChatClient;
 use LBChat\ChatServer;
-use LBChat\Command\Server\IdentifyCommand;
+use LBChat\Command\Server\IdentifyCommand as ServerIdentifyCommand;
 use LBChat\Utils\String;
 
 class VerifyCommand extends Command implements IClientCommand {
@@ -27,7 +27,7 @@ class VerifyCommand extends Command implements IClientCommand {
 			$this->client->login("password", String::degarbledeguck($this->password));
 		} else {
 			//Out of date, please update
-			$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_OUTOFDATE);
+			$command = new ServerIdentifyCommand($this->server, ServerIdentifyCommand::TYPE_OUTOFDATE);
 			$command->execute($this->client);
 		}
 	}
