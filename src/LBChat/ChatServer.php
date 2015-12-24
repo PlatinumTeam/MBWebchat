@@ -278,9 +278,6 @@ class ChatServer implements MessageComponentInterface {
 			//TODO: Shadowbanning
 			return false;
 		}
-
-		$this->sendAllUserlists();
-		$this->broadcastCommand(new Server\NotifyCommand($this, $client, "login", -1, $client->getLocation()), $client);
 		return true;
 	}
 

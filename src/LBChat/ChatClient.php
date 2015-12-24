@@ -112,6 +112,7 @@ class ChatClient {
 			return false;
 		}
 
+		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
 		$this->loggedIn = true;
 		return true;
 	}
@@ -122,7 +123,7 @@ class ChatClient {
 	public function onLogout() {
 		if ($this->loggedIn) {
 			$this->server->sendAllUserlists();
-			$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "logout", - 1, $this->location), $this);
+			$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "logout", -1, $this->location), $this);
 		}
 	}
 
@@ -363,16 +364,16 @@ class ChatClient {
 	public function login($type, $data) {
 		if ($this->tryLogin($type, $data)) {
 			//Login succeeded
-			if ($this->onLogin()) {
-				if ($this->server->onClientLogin($this)) {
+			if ($this->server->onClientLogin($this)) {
+				if ($this->onLogin()) {
 					$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_SUCCESS);
 					$command->execute($this);
-				} else {
-					//Server rejected our login. Oh well
-					$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_INVAILD);
-					$command->execute($this);
-					$this->disconnect();
 				}
+			} else {
+				//Server rejected our login. Oh well
+				$command = new IdentifyCommand($this->server, IdentifyCommand::TYPE_INVAILD);
+				$command->execute($this);
+				$this->disconnect();
 			}
 		} else {
 			//Login failed
