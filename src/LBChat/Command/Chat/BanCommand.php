@@ -29,7 +29,7 @@ class BanCommand extends Command implements IChatCommand {
 	 * Execute the given client command, applying any changes that it represents.
 	 */
 	public function execute() {
-		$this->server->banClient($this->client, $this->days);
+		$this->server->banClient($this->recipient, $this->days);
 	}
 
 	public static function init(ChatServer $server, ChatClient $client, $rest) {
