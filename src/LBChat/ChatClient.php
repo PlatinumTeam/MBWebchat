@@ -7,6 +7,10 @@ use LBChat\Command\Server\AcceptTOSCommand;
 use LBChat\Command\Server\IdentifyCommand;
 use LBChat\Command\Server\InvalidCommand;
 use LBChat\Command\Server\NotifyCommand;
+use LBChat\Filter\CapsFilter;
+use LBChat\Filter\FilterGroup;
+use LBChat\Filter\ChatFilter;
+use LBChat\Filter\ProfanityFilter;
 use LBChat\Integration\IUserSupport;
 use LBChat\Misc\ServerChatClient;
 use Ratchet\ConnectionInterface;
@@ -37,6 +41,7 @@ class ChatClient {
 	protected $guest;
 	private $friends;
 	protected $acceptedTOS;
+	protected $filter;
 
 	public function __construct(ChatServer $server, ConnectionInterface $connection, IUserSupport $support) {
 		$this->server = $server;
@@ -55,6 +60,7 @@ class ChatClient {
 		$this->guest = false;
 		$this->friends = array();
 		$this->acceptedTOS = false;
+		$this->filter = null;
 	}
 
 	/**
@@ -113,6 +119,22 @@ class ChatClient {
 		}
 
 		$this->server->broadcastCommand(new NotifyCommand($this->server, $this, "login", -1, $this->location), $this);
+		$privilege = $this->getPrivilege();
+		switch ($privilege) {
+		case 0:
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new CapsFilter($this->server, $this),
+			                                                                 new ProfanityFilter($this->server, $this))));
+			break;
+		case 1:
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new CapsFilter($this->server, $this),
+			                                                                 new ProfanityFilter($this->server, $this))));
+			break;
+		case 2:
+			$this->setChatFilter(new FilterGroup($this->server, $this, array(new CapsFilter($this->server, $this),
+			                                                                 new ProfanityFilter($this->server, $this))));
+			break;
+		}
+
 		$this->loggedIn = true;
 		return true;
 	}
@@ -497,5 +519,21 @@ class ChatClient {
 	 */
 	public function checkPrivilege($level) {
 		return $this->getPrivilege() >= $level;
+	}
+
+	/**
+	 * Get the user's current chat filter
+	 * @return ChatFilter
+	 */
+	public function getChatFilter() {
+		return $this->filter;
+	}
+
+	/**
+	 * Set the user's chat filter
+	 * @param ChatFilter $filter The new filter to use
+	 */
+	public function setChatFilter(ChatFilter $filter) {
+		$this->filter = $filter;
 	}
 }

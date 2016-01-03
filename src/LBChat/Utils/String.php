@@ -74,4 +74,20 @@ abstract class String {
 		}
 		return $finish;
 	}
+
+	/**
+	 * Strips message formatting such as colors and bold off of the string from text.
+	 * @param string $string The string to strip the formatting from.
+	 * @return string The unformatted string.
+	 */
+	public static function stripFormatting($string) {
+		// first round, standard formatting killed.
+		static $array = array("[b]", "[i]", "[bi]", "[c]", "[cc]");
+		$string = str_ireplace($array, "", $string);
+
+		// second round, now do regex on colored text.
+		$string = preg_replace("/\\[col:\\w+\\]/", "", $string);
+
+		return $string;
+	}
 }

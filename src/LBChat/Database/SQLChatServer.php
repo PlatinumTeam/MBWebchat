@@ -55,11 +55,10 @@ class SQLChatServer extends ChatServer {
 	 * Adds a client to the internal client list. This is overridden so we can
 	 * create SQLChatClients instead of normal clients.
 	 * @param ConnectionInterface $conn
+	 * @return ChatClient
 	 */
-	protected function addClient(ConnectionInterface $conn) {
-		$client = new SQLChatClient($this, $conn, $this->getUserSupport(), $this->databases);
-		$this->connections->attach($conn, $client);
-		$this->clients->attach($client);
+	protected function createClient(ConnectionInterface $conn) {
+		return new SQLChatClient($this, $conn, $this->getUserSupport(), $this->databases);
 	}
 
 	/**
