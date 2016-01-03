@@ -28,6 +28,11 @@ class ProfanityFilter extends ChatFilter {
 			foreach (self::$profanities as $profanity) {
 				/* @var array $profanity */
 
+				if ($profanity["block"]) {
+					//Your entire message is blocked
+					return false;
+				}
+
 				$detect = false;
 
 				//Case insensitive needs to use stristr
@@ -47,11 +52,6 @@ class ProfanityFilter extends ChatFilter {
 				//Don't care if it doesn't match
 				if (!$detect) {
 					continue;
-				}
-
-				if ($profanity["block"]) {
-					//Your entire message is blocked
-					return false;
 				}
 
 				//If we want to remove it, replace it
